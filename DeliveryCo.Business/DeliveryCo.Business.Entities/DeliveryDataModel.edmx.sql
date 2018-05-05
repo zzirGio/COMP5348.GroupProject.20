@@ -1,9 +1,9 @@
 
 -- --------------------------------------------------
--- Entity Designer DDL Script for SQL Server 2005, 2008, and Azure
+-- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/16/2011 23:58:04
--- Generated from EDMX file: C:\Users\Matt\Desktop\PracTaskB\DeliveryCo.Business\DeliveryCo.Business.Entities\DeliveryDataModel.edmx
+-- Date Created: 05/05/2018 11:07:26
+-- Generated from EDMX file: E:\comp5348\COMP5348.GroupProject.20\DeliveryCo.Business\DeliveryCo.Business.Entities\DeliveryDataModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -22,6 +22,9 @@ GO
 -- Dropping existing tables
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[DeliveryInfoes]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[DeliveryInfoes];
+GO
 
 -- --------------------------------------------------
 -- Creating all tables

@@ -8,12 +8,13 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel;
+using System.Data.EntityClient;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
-using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
@@ -103,6 +104,7 @@ namespace Bank.Business.Entities
         private ObjectSet<Account> _Accounts;
 
         #endregion
+
         #region AddTo Methods
     
         /// <summary>
@@ -122,11 +124,11 @@ namespace Bank.Business.Entities
         }
 
         #endregion
+
     }
-    
 
     #endregion
-    
+
     #region Entities
     
     /// <summary>
@@ -155,7 +157,8 @@ namespace Bank.Business.Entities
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -174,7 +177,7 @@ namespace Bank.Business.Entities
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -199,7 +202,7 @@ namespace Bank.Business.Entities
             {
                 OnAccountNumberChanging(value);
                 ReportPropertyChanging("AccountNumber");
-                _AccountNumber = StructuralObject.SetValidValue(value);
+                _AccountNumber = StructuralObject.SetValidValue(value, "AccountNumber");
                 ReportPropertyChanged("AccountNumber");
                 OnAccountNumberChanged();
             }
@@ -223,7 +226,7 @@ namespace Bank.Business.Entities
             {
                 OnBalanceChanging(value);
                 ReportPropertyChanging("Balance");
-                _Balance = StructuralObject.SetValidValue(value);
+                _Balance = StructuralObject.SetValidValue(value, "Balance");
                 ReportPropertyChanged("Balance");
                 OnBalanceChanged();
             }
@@ -233,7 +236,7 @@ namespace Bank.Business.Entities
         partial void OnBalanceChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -275,6 +278,7 @@ namespace Bank.Business.Entities
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -299,7 +303,8 @@ namespace Bank.Business.Entities
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -318,7 +323,7 @@ namespace Bank.Business.Entities
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -329,7 +334,7 @@ namespace Bank.Business.Entities
         partial void OnIdChanged();
 
         #endregion
-    
+
         #region Navigation Properties
     
         /// <summary>
@@ -355,8 +360,9 @@ namespace Bank.Business.Entities
         }
 
         #endregion
+
     }
 
     #endregion
-    
+
 }

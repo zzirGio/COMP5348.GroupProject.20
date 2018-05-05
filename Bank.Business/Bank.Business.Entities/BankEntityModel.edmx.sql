@@ -1,9 +1,9 @@
 
 -- --------------------------------------------------
--- Entity Designer DDL Script for SQL Server 2005, 2008, and Azure
+-- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/16/2011 23:18:47
--- Generated from EDMX file: C:\Users\Matt\Desktop\PracTaskB\Bank.Business\Bank.Business.Entities\BankEntityModel.edmx
+-- Date Created: 05/05/2018 11:06:57
+-- Generated from EDMX file: E:\comp5348\COMP5348.GroupProject.20\Bank.Business\Bank.Business.Entities\BankEntityModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -78,6 +78,7 @@ ADD CONSTRAINT [FK_CustomerAccount]
     REFERENCES [dbo].[Customers]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_CustomerAccount'
 CREATE INDEX [IX_FK_CustomerAccount]

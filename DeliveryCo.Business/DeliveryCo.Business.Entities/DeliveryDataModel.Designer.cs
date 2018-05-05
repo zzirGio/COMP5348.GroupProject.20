@@ -8,15 +8,15 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel;
+using System.Data.EntityClient;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
-using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 [assembly: EdmSchemaAttribute()]
-
 namespace DeliveryCo.Business.Entities
 {
     #region Contexts
@@ -82,6 +82,7 @@ namespace DeliveryCo.Business.Entities
         private ObjectSet<DeliveryInfo> _DeliveryInfoes;
 
         #endregion
+
         #region AddTo Methods
     
         /// <summary>
@@ -93,11 +94,11 @@ namespace DeliveryCo.Business.Entities
         }
 
         #endregion
+
     }
-    
 
     #endregion
-    
+
     #region Entities
     
     /// <summary>
@@ -134,7 +135,8 @@ namespace DeliveryCo.Business.Entities
         }
 
         #endregion
-        #region Primitive Properties
+
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -153,7 +155,7 @@ namespace DeliveryCo.Business.Entities
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -178,7 +180,7 @@ namespace DeliveryCo.Business.Entities
             {
                 OnSourceAddressChanging(value);
                 ReportPropertyChanging("SourceAddress");
-                _SourceAddress = StructuralObject.SetValidValue(value, false);
+                _SourceAddress = StructuralObject.SetValidValue(value, false, "SourceAddress");
                 ReportPropertyChanged("SourceAddress");
                 OnSourceAddressChanged();
             }
@@ -202,7 +204,7 @@ namespace DeliveryCo.Business.Entities
             {
                 OnDestinationAddressChanging(value);
                 ReportPropertyChanging("DestinationAddress");
-                _DestinationAddress = StructuralObject.SetValidValue(value, false);
+                _DestinationAddress = StructuralObject.SetValidValue(value, false, "DestinationAddress");
                 ReportPropertyChanged("DestinationAddress");
                 OnDestinationAddressChanged();
             }
@@ -226,7 +228,7 @@ namespace DeliveryCo.Business.Entities
             {
                 OnOrderNumberChanging(value);
                 ReportPropertyChanging("OrderNumber");
-                _OrderNumber = StructuralObject.SetValidValue(value, false);
+                _OrderNumber = StructuralObject.SetValidValue(value, false, "OrderNumber");
                 ReportPropertyChanged("OrderNumber");
                 OnOrderNumberChanged();
             }
@@ -250,7 +252,7 @@ namespace DeliveryCo.Business.Entities
             {
                 OnDeliveryIdentifierChanging(value);
                 ReportPropertyChanging("DeliveryIdentifier");
-                _DeliveryIdentifier = StructuralObject.SetValidValue(value);
+                _DeliveryIdentifier = StructuralObject.SetValidValue(value, "DeliveryIdentifier");
                 ReportPropertyChanged("DeliveryIdentifier");
                 OnDeliveryIdentifierChanged();
             }
@@ -274,7 +276,7 @@ namespace DeliveryCo.Business.Entities
             {
                 OnDeliveryNotificationAddressChanging(value);
                 ReportPropertyChanging("DeliveryNotificationAddress");
-                _DeliveryNotificationAddress = StructuralObject.SetValidValue(value, false);
+                _DeliveryNotificationAddress = StructuralObject.SetValidValue(value, false, "DeliveryNotificationAddress");
                 ReportPropertyChanged("DeliveryNotificationAddress");
                 OnDeliveryNotificationAddressChanged();
             }
@@ -298,7 +300,7 @@ namespace DeliveryCo.Business.Entities
             {
                 OnStatusChanging(value);
                 ReportPropertyChanging("Status");
-                _Status = StructuralObject.SetValidValue(value);
+                _Status = StructuralObject.SetValidValue(value, "Status");
                 ReportPropertyChanged("Status");
                 OnStatusChanged();
             }
@@ -308,9 +310,9 @@ namespace DeliveryCo.Business.Entities
         partial void OnStatusChanged();
 
         #endregion
-    
+
     }
 
     #endregion
-    
+
 }
