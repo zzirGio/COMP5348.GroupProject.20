@@ -114,6 +114,7 @@ namespace VideoStore.Business.Components
             
         }
 
+        // TODO: handle if successful or Unsuccesful transfer of funds
         private void TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal)
         {
             try
