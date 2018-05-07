@@ -30,12 +30,12 @@ namespace VideoStore.Business.Components
                 return GetTcpService<IEmailService>("net.tcp://localhost:9040/EmailService");
             }
         }
-
+        // TODO: change to MSMSQ Service
         public ITransferService TransferService
         {
             get
             {
-                return GetTcpService<ITransferService>("net.tcp://localhost:9020/TransferService");
+                return GetMsmqService<ITransferService>("net.msmq://localhost/private/TransferService");
             }
         }
 
@@ -54,6 +54,13 @@ namespace VideoStore.Business.Components
             NetTcpBinding tcpBinding = new NetTcpBinding() { TransactionFlow = true };
             EndpointAddress address = new EndpointAddress(pAddress);
             return new ChannelFactory<T>(tcpBinding, pAddress).CreateChannel();
+        }
+
+        private T GetMsmqService<T>(String pAddress)
+        {
+            NetMsmqBinding msmqBinding = new NetMsmqBinding(NetMsmqSecurityMode.None) { Durable = true };
+            EndpointAddress address = new EndpointAddress(pAddress);
+            return new ChannelFactory<T>(msmqBinding, pAddress).CreateChannel();
         }
     }
 }
