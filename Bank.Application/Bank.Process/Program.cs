@@ -11,28 +11,17 @@ using Microsoft.Practices.Unity.Configuration;
 using Microsoft.Practices.Unity.ServiceLocatorAdapter;
 using Microsoft.Practices.ServiceLocation;
 using System.Configuration;
-using System.Messaging;
 
 namespace Bank.Process
 {
     class Program
     {
-        private static readonly String sPublishQueuePath = ".\\private$\\TransferService";
-
         static void Main(string[] args)
         {
             ResolveDependencies();
             CreateDummyEntities();
-            EnsureQueueExists();
             HostServices();
 
-        }
-
-        private static void EnsureQueueExists()
-        {
-            // Create the transacted MSMQ queue if necessary.
-            if (!MessageQueue.Exists(sPublishQueuePath))
-                MessageQueue.Create(sPublishQueuePath, true);
         }
 
         private static void HostServices()
