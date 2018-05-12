@@ -9,6 +9,8 @@ namespace VideoStoreMiddleware
     {
         public void Publish(Message pMessage)
         {
+            Console.WriteLine("Publishing!!");
+            Console.WriteLine(pMessage.Topic);
             foreach (String lHandlerAddress in SubscriptionRegistry.Instance.GetTopicSubscribers(pMessage.Topic))
             {
                 ISubscriberService lSubServ = ServiceFactory.GetService<ISubscriberService>(lHandlerAddress);

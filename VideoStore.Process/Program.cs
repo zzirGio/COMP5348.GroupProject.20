@@ -15,6 +15,7 @@ using Microsoft.Practices.Unity.Configuration;
 using VideoStore.Business.Entities;
 using System.Transactions;
 using System.ServiceModel.Description;
+using VideoStore.Business.Components;
 using VideoStore.Business.Components.Interfaces;
 using VideoStore.WebClient.CustomAuth;
 
@@ -22,10 +23,14 @@ namespace VideoStore.Process
 {
     public class Program
     {
+        private const String cAddress = "net.msmq://localhost/private/VideoStoreTransacted";
+        private const String cMexAddress = "net.tcp://localhost:9010/VideoStoreTransacted/mex";
+
         static void Main(string[] args)
         {
             ResolveDependencies();
             InsertDummyEntities();
+            SubscribeForEvents();
             HostServices();
         }
 
@@ -204,6 +209,11 @@ namespace VideoStore.Process
         private static String GetAssemblyQualifiedServiceName(String pServiceName)
         {
             return String.Format("{0}, {1}", pServiceName, System.Configuration.ConfigurationManager.AppSettings["ServiceAssemblyName"].ToString());
+        }
+        private static void SubscribeForEvents()
+        {
+            // TODO: subcription is currently TCP which means middleware has to be running.
+            ExternalServiceFactory.Instance.SubscriptionService.Subscribe("OutcomeNotification", cAddress);
         }
     }
 }

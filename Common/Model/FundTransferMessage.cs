@@ -5,12 +5,12 @@ namespace Common.Model
     public class FundTransferMessage : Message
     {
         [DataMember]
-        public string Item { get; set; }
+        public double Amount { get; set; }
 
         [DataMember]
-        public double Price { get; set; }
+        public int FromAcctNumber { get; set; }
 
         [DataMember]
-        public double Change { get; set; }
+        public int ToAcctNumber { get; set; }
     }
 }

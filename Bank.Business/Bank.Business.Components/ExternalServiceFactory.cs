@@ -1,14 +1,9 @@
-﻿using Bank.Services.Interfaces;
-using DeliveryCo.Services.Interfaces;
-using EmailService.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.ServiceModel;
-using System.Text;
+using Bank.Services.Interfaces;
 using VideoStoreMiddleware.Interfaces;
 
-namespace VideoStore.Business.Components
+namespace Bank.Business.Components
 {
     public class ExternalServiceFactory
     {
@@ -22,29 +17,12 @@ namespace VideoStore.Business.Components
             }
         }
 
-
-
-        public IEmailService EmailService
+        public IPublisherService PublisherService
         {
             get
             {
-                return GetTcpService<IEmailService>("net.tcp://localhost:9040/EmailService");
-            }
-        }
-
-        public ITransferService TransferService
-        {
-            get
-            {
-                return GetTcpService<ITransferService>("net.tcp://localhost:9020/TransferService");
-            }
-        }
-
-        public IDeliveryService DeliveryService
-        {
-            get
-            {
-                return GetTcpService<IDeliveryService>("net.tcp://localhost:9030/DeliveryService");
+                return GetMsmqService<IPublisherService>(
+                    "net.msmq://localhost/private/PublisherMessageQueueTransacted");
             }
         }
 
@@ -54,14 +32,6 @@ namespace VideoStore.Business.Components
             {
                 return GetTcpService<ISubscriptionService>("net.tcp://localhost:9011/SubscriptionService");
 
-            }
-        }
-        public IPublisherService PublisherService
-        {
-            get
-            {
-                return GetMsmqService<IPublisherService>(
-                    "net.msmq://localhost/private/PublisherMessageQueueTransacted");
             }
         }
 
@@ -76,7 +46,7 @@ namespace VideoStore.Business.Components
         {
             NetMsmqBinding msmqBinding = new NetMsmqBinding(NetMsmqSecurityMode.None) { Durable = true };
             EndpointAddress address = new EndpointAddress(pAddress);
-            return new ChannelFactory<T>(msmqBinding, address).CreateChannel();
+            return new ChannelFactory<T>(msmqBinding, pAddress).CreateChannel();
         }
     }
 }

@@ -56,7 +56,9 @@
     <Compile Include="DeliveryNotificationProvider.cs" />
     <Compile Include="EmailProvider.cs" />
     <Compile Include="ExternalServiceFactory.cs" />
+    <Compile Include="Model\FundTransferRequest.cs" />
     <Compile Include="RoleProvider.cs" />
+    <Compile Include="Transformation\FundTransferRequestToFundTransferMessage.cs" />
     <Compile Include="UserProvider.cs" />
     <Compile Include="OrderProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,6 +96,10 @@
     <ProjectReference Include="..\VideoStore.Entities\VideoStore.Business.Entities\VideoStore.Business.Entities.csproj">
       <Project>{35992EC3-2C32-46AF-AEE4-491C54F681A5}</Project>
       <Name>VideoStore.Business.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VideoStoreMiddleware\VideoStoreMiddleware.csproj">
+      <Project>{F1176CF8-D6A1-4E1C-A7D1-B4293117C720}</Project>
+      <Name>VideoStoreMiddleware</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
