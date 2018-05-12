@@ -69,6 +69,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
@@ -115,6 +116,10 @@
     <ProjectReference Include="..\VideoStore.WebClient\VideoStore.WebClient.csproj">
       <Project>{6a0aebb1-060f-4a88-b18e-448935063e1a}</Project>
       <Name>VideoStore.WebClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VideoStoreMiddleware\VideoStoreMiddleware.csproj">
+      <Project>{F1176CF8-D6A1-4E1C-A7D1-B4293117C720}</Project>
+      <Name>VideoStoreMiddleware</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -11,17 +11,21 @@ using Microsoft.Practices.Unity.Configuration;
 using Microsoft.Practices.Unity.ServiceLocatorAdapter;
 using Microsoft.Practices.ServiceLocation;
 using System.Configuration;
+using Bank.Business.Components;
 
 namespace Bank.Process
 {
     class Program
     {
+        private const String cAddress = "net.msmq://localhost/private/BankTransacted";
+        private const String cMexAddress = "net.tcp://localhost:9010/BankTransacted/mex";
+
         static void Main(string[] args)
         {
             ResolveDependencies();
             CreateDummyEntities();
+            SubscribeForEvents();
             HostServices();
-
         }
 
         private static void HostServices()
@@ -69,6 +73,11 @@ namespace Bank.Process
             lSection.Containers["containerOne"].Configure(lContainer);
             UnityServiceLocator locator = new UnityServiceLocator(lContainer);
             ServiceLocator.SetLocatorProvider(() => locator);
+        }
+
+        private static void SubscribeForEvents()
+        {
+            ExternalServiceFactory.Instance.SubscriptionService.Subscribe("FundTransfer", cAddress);
         }
     }
 }

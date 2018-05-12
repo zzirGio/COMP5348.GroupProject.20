@@ -63,6 +63,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
@@ -100,6 +101,10 @@
     <ProjectReference Include="..\..\Bank.Services\Bank.Services.Interfaces\Bank.Services.Interfaces.csproj">
       <Project>{3317F30A-A62C-474D-8D2B-B91605ECF202}</Project>
       <Name>Bank.Services.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VideoStoreMiddleware\VideoStoreMiddleware.csproj">
+      <Project>{F1176CF8-D6A1-4E1C-A7D1-B4293117C720}</Project>
+      <Name>VideoStoreMiddleware</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

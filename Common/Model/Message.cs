@@ -7,6 +7,8 @@ using System.Runtime.Serialization;
 namespace Common.Model
 {
     [DataContract]
+    [KnownType(typeof(FundTransferMessage))]
+    [KnownType(typeof(OperationOutcomeNotification))]
     public abstract class Message : IVisitable
     {
         [DataMember]

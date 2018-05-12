@@ -7,6 +7,9 @@ using VideoStore.Business.Entities;
 using System.Transactions;
 using Microsoft.Practices.ServiceLocation;
 using DeliveryCo.MessageTypes;
+using VideoStore.Business.Components.Model;
+using VideoStore.Business.Components.Transformation;
+using VideoStoreMiddleware.Interfaces;
 
 namespace VideoStore.Business.Components
 {
@@ -35,7 +38,8 @@ namespace VideoStore.Business.Components
                     {
                         pOrder.OrderNumber = Guid.NewGuid();
                         TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
-
+                        Console.WriteLine("Fund Transfer Requested");
+                        return;
                         pOrder.UpdateStockLevels();
 
                         PlaceDeliveryForOrder(pOrder);
@@ -118,10 +122,19 @@ namespace VideoStore.Business.Components
         {
             try
             {
-                ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveVideoStoreAccountNumber());
+                FundTransferRequest request = new FundTransferRequest
+                {
+                    Amount = pTotal,
+                    FromAcctNumber = pCustomerAccountNumber,
+                    ToAcctNumber = RetrieveVideoStoreAccountNumber()
+                };
+                FundTransferRequestToFundTransferMessage lVisitor = new FundTransferRequestToFundTransferMessage();
+                lVisitor.Visit(request);
+                ExternalServiceFactory.Instance.PublisherService.Publish(lVisitor.Result);
             }
             catch(Exception e)
             {
+                Console.WriteLine(e);
                 throw new Exception("Error Transferring funds for order.");
             }
         }

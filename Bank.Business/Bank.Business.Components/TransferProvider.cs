@@ -5,6 +5,7 @@ using System.Text;
 using Bank.Business.Components.Interfaces;
 using Bank.Business.Entities;
 using System.Transactions;
+using Bank.Business.Components.Transformations;
 using Bank.Services.Interfaces;
 
 namespace Bank.Business.Components
@@ -15,10 +16,11 @@ namespace Bank.Business.Components
 
         public void Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber)
         {
+            var operationOutcome = new Model.OperationOutcome();
+            OperationOutcomeToOperationOutcomeNotification lVisitor = new OperationOutcomeToOperationOutcomeNotification("FundTransfer");
             using (TransactionScope lScope = new TransactionScope())
             using (BankEntityModelContainer lContainer = new BankEntityModelContainer())
             {
-
                 try
                 {
                     Account lFromAcct = GetAccountFromNumber(pFromAcctNumber);
@@ -31,10 +33,17 @@ namespace Bank.Business.Components
                     lContainer.ObjectStateManager.ChangeObjectState(lToAcct, System.Data.EntityState.Modified);
                     lContainer.SaveChanges();
                     lScope.Complete();
-  
+
+                    operationOutcome.IsSuccesful = true;
+                    lVisitor.Visit(operationOutcome);
+                    ExternalServiceFactory.Instance.PublisherService.Publish(lVisitor.Result);
                 }
                 catch (Exception lException)
                 {
+                    operationOutcome.IsSuccesful = false;
+                    lVisitor.Visit(operationOutcome);
+                    ExternalServiceFactory.Instance.PublisherService.Publish(lVisitor.Result);
+
                     Console.WriteLine("Error occured while transferring money:  " + lException.Message);
                     throw;
 
