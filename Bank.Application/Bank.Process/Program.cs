@@ -23,16 +23,16 @@ namespace Bank.Process
 
         private static global::Common.SubscriberServiceHost mHost;
         private const String cAddress = "net.msmq://localhost/private/BankQueueTransacted";
-        private const String cMexAddress = "net.tcp://localhost:9018/BankQueueTransacted/mex";
+        private const String cMexAddress = "net.tcp://localhost:9022/BankQueueTransacted/mex";
 
         static void Main(string[] args)
         {
             ResolveDependencies();
             CreateDummyEntities();
             EnsureQueueExists();
-            HostServices();
             HostSubscriberService();
             SubscribeForEvents();
+            HostServices();
         }
 
         private static void HostSubscriberService()
