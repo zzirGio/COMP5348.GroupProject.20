@@ -6,6 +6,8 @@ using Bank.Business.Components.Interfaces;
 using Bank.Business.Entities;
 using System.Transactions;
 using Bank.Services.Interfaces;
+using Bank.Business.Components.PublisherService;
+using Common.Model;
 
 namespace Bank.Business.Components
 {
@@ -31,13 +33,23 @@ namespace Bank.Business.Components
                     lContainer.ObjectStateManager.ChangeObjectState(lToAcct, System.Data.EntityState.Modified);
                     lContainer.SaveChanges();
                     lScope.Complete();
-  
+
+                    TransferCompleteMessage message = new TransferCompleteMessage();
+                    message.Topic = "TransferComplete";
+                    PublisherServiceClient lClient = new PublisherServiceClient();
+                    lClient.Publish(message);
                 }
                 catch (Exception lException)
                 {
                     Console.WriteLine("Error occured while transferring money:  " + lException.Message);
-                    throw;
 
+                    TransferErrorMessage message = new TransferErrorMessage();
+                    message.Topic = "TransferError";
+                    message.Error = lException;
+                    PublisherServiceClient lClient = new PublisherServiceClient();
+                    lClient.Publish(message);
+
+                    throw;
                 }
             }
         }
