@@ -31,8 +31,6 @@ namespace Bank.Business.Components
                     lContainer.Attach(lToAcct);
                     lContainer.ObjectStateManager.ChangeObjectState(lFromAcct, System.Data.EntityState.Modified);
                     lContainer.ObjectStateManager.ChangeObjectState(lToAcct, System.Data.EntityState.Modified);
-                    lContainer.SaveChanges();
-                    lScope.Complete();
 
                     TransferCompleteMessage message = new TransferCompleteMessage
                     {
@@ -41,6 +39,9 @@ namespace Bank.Business.Components
                     message.Topic = "TransferComplete";
                     PublisherServiceClient lClient = new PublisherServiceClient();
                     lClient.Publish(message);
+
+                    lContainer.SaveChanges();
+                    lScope.Complete();
                 }
                 catch (Exception lException)
                 {

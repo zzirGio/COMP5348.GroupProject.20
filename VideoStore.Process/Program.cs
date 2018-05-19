@@ -26,15 +26,15 @@ namespace VideoStore.Process
     {
         private static global::Common.SubscriberServiceHost mHost;
         private const String cAddress = "net.msmq://localhost/private/VideoStoreQueueTransacted";
-        private const String cMexAddress = "net.tcp://localhost:9018/VideoStoreQueueTransacted/mex";
+        private const String cMexAddress = "net.tcp://localhost:9021/VideoStoreQueueTransacted/mex";
 
         static void Main(string[] args)
         {
             ResolveDependencies();
             InsertDummyEntities();
-            HostServices();
             HostSubscriberService();
             SubscribeForEvents();
+            HostServices();
         }
 
         private static void HostSubscriberService()

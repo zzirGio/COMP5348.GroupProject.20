@@ -12,15 +12,11 @@ namespace Bank.Services
 {
     public class SubscriberService : ISubscriberService
     {
-        private ITransferService TransferService
-        {
-            get { return ServiceLocator.Current.GetInstance<ITransferService>(); }
-        }
-
         public void PublishToSubscriber(Message pMessage)
         {
             TransferRequestMessage message = pMessage as TransferRequestMessage;
-            TransferService.Transfer(message.Amount, message.FromAccountNumber, message.ToAccountNumber, message.OrderGuid);
+            var tService = new TransferService();
+            tService.Transfer(message.Amount, message.FromAccountNumber, message.ToAccountNumber, message.OrderGuid);
         }
     }
 }

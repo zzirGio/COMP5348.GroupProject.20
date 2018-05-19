@@ -34,11 +34,15 @@ namespace VideoStore.Business.Components
                 {
                     try
                     {
-                        Console.WriteLine("Funds Transfer Requested");
-                        pOrder.OrderNumber = Guid.NewGuid();                  
-                        TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0, pOrder.OrderNumber);
+                        Console.WriteLine("Saving temporary");
+
+                        pOrder.OrderNumber = Guid.NewGuid();
                         lContainer.Orders.ApplyChanges(pOrder);
                         pOrder.UpdateStockLevels();
+
+                        TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0, pOrder.OrderNumber);
+                        Console.WriteLine("Funds Transfer Requested");
+
                         lContainer.SaveChanges();
                         lScope.Complete();
 

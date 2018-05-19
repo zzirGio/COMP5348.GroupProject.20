@@ -11,23 +11,16 @@ namespace VideoStore.Services
 {
     public class SubscriberService : ISubscriberService
     {
-        private IOrderService OrderService
-        {
-            get
-            {
-                return ServiceFactory.GetService<IOrderService>();
-            }
-        }
-
         public void PublishToSubscriber(Message pMessage)
         {
+            var oService = new OrderService();
             if(pMessage.GetType() == typeof(TransferCompleteMessage))
             {
-                OrderService.FundsTransferCompleted(pMessage as TransferCompleteMessage);
+                oService.FundsTransferCompleted(pMessage as TransferCompleteMessage);
             }
             else if(pMessage.GetType() == typeof(TransferErrorMessage))
             {
-                OrderService.FundsTransferFailed(pMessage as TransferErrorMessage);
+                oService.FundsTransferFailed(pMessage as TransferErrorMessage);
             }
         }
     }
