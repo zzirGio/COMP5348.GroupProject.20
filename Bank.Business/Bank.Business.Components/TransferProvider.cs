@@ -15,7 +15,7 @@ namespace Bank.Business.Components
     {
 
 
-        public void Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber)
+        public void Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber, Guid pOrderGuid)
         {
             using (TransactionScope lScope = new TransactionScope())
             using (BankEntityModelContainer lContainer = new BankEntityModelContainer())
@@ -34,7 +34,10 @@ namespace Bank.Business.Components
                     lContainer.SaveChanges();
                     lScope.Complete();
 
-                    TransferCompleteMessage message = new TransferCompleteMessage();
+                    TransferCompleteMessage message = new TransferCompleteMessage
+                    {
+                        OrderGuid = pOrderGuid
+                    };
                     message.Topic = "TransferComplete";
                     PublisherServiceClient lClient = new PublisherServiceClient();
                     lClient.Publish(message);
@@ -43,7 +46,10 @@ namespace Bank.Business.Components
                 {
                     Console.WriteLine("Error occured while transferring money:  " + lException.Message);
 
-                    TransferErrorMessage message = new TransferErrorMessage();
+                    TransferErrorMessage message = new TransferErrorMessage
+                    {
+                        OrderGuid = pOrderGuid
+                    };
                     message.Topic = "TransferError";
                     message.Error = lException;
                     PublisherServiceClient lClient = new PublisherServiceClient();

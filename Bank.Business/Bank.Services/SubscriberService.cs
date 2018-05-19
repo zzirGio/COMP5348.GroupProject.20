@@ -1,5 +1,7 @@
-﻿using Common;
+﻿using Bank.Services.Interfaces;
+using Common;
 using Common.Model;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +12,15 @@ namespace Bank.Services
 {
     public class SubscriberService : ISubscriberService
     {
+        private ITransferService TransferService
+        {
+            get { return ServiceLocator.Current.GetInstance<ITransferService>(); }
+        }
+
         public void PublishToSubscriber(Message pMessage)
         {
             TransferRequestMessage message = pMessage as TransferRequestMessage;
-            TransferService tService = new TransferService();
-            tService.Transfer(message.Amount, message.FromAccountNumber, message.ToAccountNumber);
+            TransferService.Transfer(message.Amount, message.FromAccountNumber, message.ToAccountNumber, message.OrderGuid);
         }
     }
 }
