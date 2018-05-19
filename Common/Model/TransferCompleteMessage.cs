@@ -10,6 +10,7 @@ namespace Common.Model
     [DataContract]
     public class TransferCompleteMessage : Message
     {
-
+        [DataMember]
+        public Guid OrderGuid { get; set; }
     }
 }

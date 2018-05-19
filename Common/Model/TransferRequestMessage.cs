@@ -18,5 +18,8 @@ namespace Common.Model
 
         [DataMember]
         public int ToAccountNumber { get; set; }
+
+        [DataMember]
+        public Guid OrderGuid { get; set; }
     }
 }
