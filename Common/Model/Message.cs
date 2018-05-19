@@ -9,6 +9,7 @@ namespace Common.Model
 {
     [DataContract]
     [KnownType(typeof(PriceChangeMessage))]
+    [KnownType(typeof(SendEmailMessage))]
     public abstract class Message : IVisitable
     {
         [DataMember]
