@@ -5,8 +5,10 @@ using System.Text;
 using VideoStore.Business.Components.Interfaces;
 using VideoStore.Business.Entities;
 using System.Transactions;
+using Common.Model;
 using Microsoft.Practices.ServiceLocation;
 using DeliveryCo.MessageTypes;
+using VideoStore.Business.Components.PublisherService;
 
 namespace VideoStore.Business.Components
 {
@@ -24,7 +26,10 @@ namespace VideoStore.Business.Components
 
         public void SubmitOrder(Entities.Order pOrder)
         {
-           
+            TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+            Console.WriteLine("Funds Transfer Requested");
+            return;
+
             using (TransactionScope lScope = new TransactionScope())
             {
                 LoadMediaStocks(pOrder);
@@ -35,10 +40,11 @@ namespace VideoStore.Business.Components
                     {
                         pOrder.OrderNumber = Guid.NewGuid();
                         TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+                        Console.WriteLine("Funds Transfer Requested");
 
-                        pOrder.UpdateStockLevels();
-
-                        PlaceDeliveryForOrder(pOrder);
+                        // TODO: Refactor this to execute when Bank sends back Successful Notification
+                        // pOrder.UpdateStockLevels();
+                        // PlaceDeliveryForOrder(pOrder);
                         lContainer.Orders.ApplyChanges(pOrder);
          
                         lContainer.SaveChanges();
@@ -119,10 +125,20 @@ namespace VideoStore.Business.Components
         {
             try
             {
-                ExternalServiceFactory.Instance.TransferService.Transfer(pTotal, pCustomerAccountNumber, RetrieveVideoStoreAccountNumber());
+                // TODO: Edit this for actual Fund transfer message
+                PublisherServiceClient lClient = new PublisherServiceClient();
+                var testMessage = new PriceChangeMessage
+                {
+                    Change = 0.2,
+                    Item = "This is from orderProvider",
+                    Price = 0.69,
+                    Topic = "TestTopic"
+                };
+                lClient.Publish(testMessage);
             }
             catch(Exception e)
             {
+                Console.WriteLine(e);
                 throw new Exception("Error Transferring funds for order.");
             }
         }
