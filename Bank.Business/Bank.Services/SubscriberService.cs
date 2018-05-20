@@ -16,7 +16,7 @@ namespace Bank.Services
         {
             TransferRequestMessage message = pMessage as TransferRequestMessage;
             var tService = new TransferService();
-            tService.Transfer(message.Amount, message.FromAccountNumber, message.ToAccountNumber, message.OrderGuid);
+            tService.Transfer(message.Amount, message.FromAccountNumber, message.ToAccountNumber, message.OrderGuid, message.CustomerId);
         }
     }
 }

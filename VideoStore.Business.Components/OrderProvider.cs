@@ -40,7 +40,7 @@ namespace VideoStore.Business.Components
                         pOrder.UpdateStockLevels();
                         lContainer.Orders.ApplyChanges(pOrder);
 
-                        TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0, pOrder.OrderNumber);
+                        TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0, pOrder.OrderNumber, pOrder.Customer.Id);
                         Console.WriteLine("Funds Transfer Requested");
 
                         lContainer.SaveChanges();
@@ -100,6 +100,7 @@ namespace VideoStore.Business.Components
                     {
                         Console.WriteLine("Funds Transfer Complete");
                         var pOrder = lContainer.Orders.First(x => x.OrderNumber == message.OrderGuid);
+                        pOrder.Customer = lContainer.Users.First(x => x.Id == message.CustomerId);
 
                         PlaceDeliveryForOrder(pOrder);
                         SendOrderPlacedConfirmation(pOrder);
@@ -205,7 +206,7 @@ namespace VideoStore.Business.Components
             
         }
 
-        private void TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal, Guid pOrderGuid)
+        private void TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal, Guid pOrderGuid, int pCustomerId)
         {
             try
             {
@@ -216,7 +217,8 @@ namespace VideoStore.Business.Components
                     Amount = pTotal,
                     FromAccountNumber = pCustomerAccountNumber,
                     ToAccountNumber = RetrieveVideoStoreAccountNumber(),
-                    OrderGuid = pOrderGuid
+                    OrderGuid = pOrderGuid,
+                    CustomerId = pCustomerId
                 };
                 lClient.Publish(message);
             }
@@ -225,24 +227,6 @@ namespace VideoStore.Business.Components
                 Console.WriteLine(e);
                 throw new Exception("Error Transferring funds for order.");
             }
-
-            /*try
-            {
-                PublisherServiceClient lClient = new PublisherServiceClient();
-                var testMessage = new PriceChangeMessage
-                {
-                    Change = 0.2,
-                    Item = "This is from orderProvider",
-                    Price = 0.69,
-                    Topic = "TestTopic"
-                };
-                lClient.Publish(testMessage);
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e);
-                throw new Exception("Error Transferring funds for order.");
-            }*/
         }
 
 

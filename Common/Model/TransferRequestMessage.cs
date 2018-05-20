@@ -21,5 +21,8 @@ namespace Common.Model
 
         [DataMember]
         public Guid OrderGuid { get; set; }
+
+        [DataMember]
+        public int CustomerId { get; set; }
     }
 }

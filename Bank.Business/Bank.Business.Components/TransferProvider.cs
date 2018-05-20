@@ -15,7 +15,7 @@ namespace Bank.Business.Components
     {
 
 
-        public void Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber, Guid pOrderGuid)
+        public void Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber, Guid pOrderGuid, int pCustomerId)
         {
             using (TransactionScope lScope = new TransactionScope())
             using (BankEntityModelContainer lContainer = new BankEntityModelContainer())
@@ -34,14 +34,14 @@ namespace Bank.Business.Components
 
                     TransferCompleteMessage message = new TransferCompleteMessage
                     {
-                        OrderGuid = pOrderGuid
+                        OrderGuid = pOrderGuid,
+                        CustomerId = pCustomerId
                     };
                     message.Topic = "TransferComplete";
                     PublisherServiceClient lClient = new PublisherServiceClient();
                     lClient.Publish(message);
 
-                    lContainer.SaveChanges();
-                    lScope.Complete();
+                    
                 }
                 catch (Exception lException)
                 {
@@ -58,6 +58,9 @@ namespace Bank.Business.Components
 
                     throw;
                 }
+
+                lContainer.SaveChanges();
+                lScope.Complete();
             }
         }
 
