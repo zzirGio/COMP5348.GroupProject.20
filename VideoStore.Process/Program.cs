@@ -17,16 +17,36 @@ using System.Transactions;
 using System.ServiceModel.Description;
 using VideoStore.Business.Components.Interfaces;
 using VideoStore.WebClient.CustomAuth;
+using Common;
+using VideoStore.Process.SubscriptionService;
 
 namespace VideoStore.Process
 {
     public class Program
     {
+        private static global::Common.SubscriberServiceHost mHost;
+        private const String cAddress = "net.msmq://localhost/private/VideoStoreQueueTransacted";
+        private const String cMexAddress = "net.tcp://localhost:9021/VideoStoreQueueTransacted/mex";
+
         static void Main(string[] args)
         {
             ResolveDependencies();
             InsertDummyEntities();
+            HostSubscriberService();
+            SubscribeForEvents();
             HostServices();
+        }
+
+        private static void HostSubscriberService()
+        {
+            mHost = new SubscriberServiceHost(typeof(SubscriberService), cAddress, cMexAddress, true, ".\\private$\\VideoStoreQueueTransacted");
+        }
+
+        private static void SubscribeForEvents()
+        {
+            SubscriptionServiceClient lClient = new SubscriptionServiceClient();
+            lClient.Subscribe("TransferComplete", cAddress);
+            lClient.Subscribe("TransferError", cAddress);
         }
 
         private static void InsertDummyEntities()

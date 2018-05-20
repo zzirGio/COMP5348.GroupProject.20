@@ -8,6 +8,7 @@ using Microsoft.Practices.ServiceLocation;
 using VideoStore.Services.MessageTypes;
 
 using System.ServiceModel;
+using Common.Model;
 
 namespace VideoStore.Services
 {
@@ -20,6 +21,16 @@ namespace VideoStore.Services
             {
                 return ServiceFactory.GetService<IOrderProvider>();
             }
+        }
+
+        public void FundsTransferCompleted(TransferCompleteMessage message)
+        {
+            OrderProvider.FundsTransferCompleted(message);
+        }
+
+        public void FundsTransferFailed(TransferErrorMessage message)
+        {
+            OrderProvider.FundsTransferFailed(message);
         }
 
         public void SubmitOrder(Order pOrder)

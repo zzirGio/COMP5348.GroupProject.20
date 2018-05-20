@@ -12,6 +12,8 @@ using Microsoft.Practices.Unity.ServiceLocatorAdapter;
 using Microsoft.Practices.ServiceLocation;
 using System.Configuration;
 using System.Messaging;
+using Bank.Process.SubscriptionService;
+using Common;
 
 namespace Bank.Process
 {
@@ -19,13 +21,29 @@ namespace Bank.Process
     {
         private static readonly String sPublishQueuePath = ".\\private$\\TransferService";
 
+        private static global::Common.SubscriberServiceHost mHost;
+        private const String cAddress = "net.msmq://localhost/private/BankQueueTransacted";
+        private const String cMexAddress = "net.tcp://localhost:9022/BankQueueTransacted/mex";
+
         static void Main(string[] args)
         {
             ResolveDependencies();
             CreateDummyEntities();
             EnsureQueueExists();
+            HostSubscriberService();
+            SubscribeForEvents();
             HostServices();
+        }
 
+        private static void HostSubscriberService()
+        {
+            mHost = new SubscriberServiceHost(typeof(SubscriberService), cAddress, cMexAddress, true, ".\\private$\\BankQueueTransacted");
+        }
+
+        private static void SubscribeForEvents()
+        {
+            SubscriptionServiceClient lClient = new SubscriptionServiceClient();
+            lClient.Subscribe("TransferRequest", cAddress);
         }
 
         private static void EnsureQueueExists()
@@ -53,11 +71,11 @@ namespace Bank.Process
                 if (lContainer.Accounts.Count() == 0)
                 {
                     Customer lVideoStore = new Customer();
-                    Account lVSAccount = new Account() { AccountNumber = 123, Balance = 0 };
+                    Account lVSAccount = new Account() { AccountNumber = 123, Balance = 10000 };
                     lVideoStore.Accounts.Add(lVSAccount);
 
                     Customer lCustomer = new Customer();
-                    Account lCustAccount = new Account() { AccountNumber = 456, Balance = 20 };
+                    Account lCustAccount = new Account() { AccountNumber = 456, Balance = 2000000 };
                     lCustomer.Accounts.Add(lCustAccount);
 
 

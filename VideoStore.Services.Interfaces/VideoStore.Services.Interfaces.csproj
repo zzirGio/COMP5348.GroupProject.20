@@ -64,6 +64,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{C2D987A4-AD05-4C0B-B285-5B64B0132DF9}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VideoStore.Services.MessageTypes\VideoStore.Services.MessageTypes.csproj">
       <Project>{27445e9d-2f52-473a-96af-85fac10bcce0}</Project>
       <Name>VideoStore.Services.MessageTypes</Name>

@@ -24,9 +24,38 @@ namespace VideoStore.Business.Components
             get { return ServiceLocator.Current.GetInstance<IUserProvider>(); }
         }
 
-        public void SubmitOrder(Entities.Order pOrder)
+        public void SubmitOrder(Order pOrder)
         {
-            TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
+            using (TransactionScope lScope = new TransactionScope())
+            {
+                LoadMediaStocks(pOrder);
+                MarkAppropriateUnchangedAssociations(pOrder);
+                using (VideoStoreEntityModelContainer lContainer = new VideoStoreEntityModelContainer())
+                {
+                    try
+                    {
+                        Console.WriteLine("Saving temporary");
+
+                        pOrder.OrderNumber = Guid.NewGuid();
+                        pOrder.UpdateStockLevels();
+                        lContainer.Orders.ApplyChanges(pOrder);
+
+                        TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0, pOrder.OrderNumber, pOrder.Customer.Id);
+                        Console.WriteLine("Funds Transfer Requested");
+
+                        lContainer.SaveChanges();
+                        lScope.Complete();
+
+                    }
+                    catch (Exception lException)
+                    {
+                        SendOrderErrorMessage(pOrder, lException);
+                        throw;
+                    }
+                }
+            }
+
+            /*TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
             Console.WriteLine("Funds Transfer Requested");
             return;
 
@@ -58,7 +87,64 @@ namespace VideoStore.Business.Components
                     }
                 }
             }
-            SendOrderPlacedConfirmation(pOrder);
+            SendOrderPlacedConfirmation(pOrder);*/
+        }
+
+        public void FundsTransferCompleted(TransferCompleteMessage message)
+        {
+            using (TransactionScope lScope = new TransactionScope())
+            {
+                using (VideoStoreEntityModelContainer lContainer = new VideoStoreEntityModelContainer())
+                {
+                    try
+                    {
+                        Console.WriteLine("Funds Transfer Complete");
+                        var pOrder = lContainer.Orders.First(x => x.OrderNumber == message.OrderGuid);
+                        pOrder.Customer = lContainer.Users.First(x => x.Id == message.CustomerId);
+
+                        PlaceDeliveryForOrder(pOrder);
+                        SendOrderPlacedConfirmation(pOrder);
+
+                        lContainer.SaveChanges();
+                        lScope.Complete();
+                    }
+                    catch(Exception lException)
+                    {
+                        Console.WriteLine("Error in FundsTransferComplete: "+lException.Message);
+                        throw;
+                    }
+                }
+            }
+            
+        }
+
+        public void FundsTransferFailed(TransferErrorMessage message)
+        {
+            using (TransactionScope lScope = new TransactionScope())
+            {
+                using (VideoStoreEntityModelContainer lContainer = new VideoStoreEntityModelContainer())
+                {
+                    try
+                    {
+                        Console.WriteLine("Funds Transfer Error");
+                        var pOrder = lContainer.Orders.First(x => x.OrderNumber == message.OrderGuid);
+                        pOrder.MarkAsDeleted();
+
+                        LoadMediaStocks(pOrder);
+                        MarkAppropriateUnchangedAssociations(pOrder);
+
+                        lContainer.Orders.ApplyChanges(pOrder);
+                        pOrder.UpdateStockLevels();
+                        lContainer.SaveChanges();
+                        lScope.Complete();
+                    }
+                    catch(Exception lException)
+                    {
+                        Console.WriteLine("Error in FundsTransferError: " + lException.Message);
+                        throw;
+                    }
+                }
+            }
         }
 
         private void MarkAppropriateUnchangedAssociations(Order pOrder)
@@ -120,21 +206,21 @@ namespace VideoStore.Business.Components
             
         }
 
-        // TODO: handle if successful or Unsuccesful transfer of funds
-        private void TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal)
+        private void TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal, Guid pOrderGuid, int pCustomerId)
         {
             try
             {
-                // TODO: Edit this for actual Fund transfer message
                 PublisherServiceClient lClient = new PublisherServiceClient();
-                var testMessage = new PriceChangeMessage
+                var message = new TransferRequestMessage
                 {
-                    Change = 0.2,
-                    Item = "This is from orderProvider",
-                    Price = 0.69,
-                    Topic = "TestTopic"
+                    Topic = "TransferRequest",
+                    Amount = pTotal,
+                    FromAccountNumber = pCustomerAccountNumber,
+                    ToAccountNumber = RetrieveVideoStoreAccountNumber(),
+                    OrderGuid = pOrderGuid,
+                    CustomerId = pCustomerId
                 };
-                lClient.Publish(testMessage);
+                lClient.Publish(message);
             }
             catch(Exception e)
             {
@@ -148,7 +234,5 @@ namespace VideoStore.Business.Components
         {
             return 123;
         }
-
-
     }
 }

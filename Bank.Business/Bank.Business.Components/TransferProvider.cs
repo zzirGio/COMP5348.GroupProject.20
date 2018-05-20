@@ -6,6 +6,8 @@ using Bank.Business.Components.Interfaces;
 using Bank.Business.Entities;
 using System.Transactions;
 using Bank.Services.Interfaces;
+using Bank.Business.Components.PublisherService;
+using Common.Model;
 
 namespace Bank.Business.Components
 {
@@ -13,7 +15,7 @@ namespace Bank.Business.Components
     {
 
 
-        public void Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber)
+        public void Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber, Guid pOrderGuid, int pCustomerId)
         {
             using (TransactionScope lScope = new TransactionScope())
             using (BankEntityModelContainer lContainer = new BankEntityModelContainer())
@@ -29,16 +31,36 @@ namespace Bank.Business.Components
                     lContainer.Attach(lToAcct);
                     lContainer.ObjectStateManager.ChangeObjectState(lFromAcct, System.Data.EntityState.Modified);
                     lContainer.ObjectStateManager.ChangeObjectState(lToAcct, System.Data.EntityState.Modified);
-                    lContainer.SaveChanges();
-                    lScope.Complete();
-  
+
+                    TransferCompleteMessage message = new TransferCompleteMessage
+                    {
+                        OrderGuid = pOrderGuid,
+                        CustomerId = pCustomerId
+                    };
+                    message.Topic = "TransferComplete";
+                    PublisherServiceClient lClient = new PublisherServiceClient();
+                    lClient.Publish(message);
+
+                    
                 }
                 catch (Exception lException)
                 {
                     Console.WriteLine("Error occured while transferring money:  " + lException.Message);
-                    throw;
 
+                    TransferErrorMessage message = new TransferErrorMessage
+                    {
+                        OrderGuid = pOrderGuid
+                    };
+                    message.Topic = "TransferError";
+                    message.Error = lException;
+                    PublisherServiceClient lClient = new PublisherServiceClient();
+                    lClient.Publish(message);
+
+                    throw;
                 }
+
+                lContainer.SaveChanges();
+                lScope.Complete();
             }
         }
 

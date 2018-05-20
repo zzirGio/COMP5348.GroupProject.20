@@ -10,6 +10,9 @@ namespace Common.Model
     [DataContract]
     [KnownType(typeof(PriceChangeMessage))]
     [KnownType(typeof(SendEmailMessage))]
+    [KnownType(typeof(TransferCompleteMessage))]
+    [KnownType(typeof(TransferErrorMessage))]
+    [KnownType(typeof(TransferRequestMessage))]
     public abstract class Message : IVisitable
     {
         [DataMember]
