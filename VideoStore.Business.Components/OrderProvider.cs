@@ -37,8 +37,8 @@ namespace VideoStore.Business.Components
                         Console.WriteLine("Saving temporary");
 
                         pOrder.OrderNumber = Guid.NewGuid();
-                        lContainer.Orders.ApplyChanges(pOrder);
                         pOrder.UpdateStockLevels();
+                        lContainer.Orders.ApplyChanges(pOrder);
 
                         TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0, pOrder.OrderNumber);
                         Console.WriteLine("Funds Transfer Requested");
