@@ -56,6 +56,7 @@
     <Compile Include="DeliveryNotificationProvider.cs" />
     <Compile Include="EmailProvider.cs" />
     <Compile Include="ExternalServiceFactory.cs" />
+    <Compile Include="Model\DeliveryInfoItem.cs" />
     <Compile Include="Model\EmailMessageItem.cs" />
     <Compile Include="RoleProvider.cs" />
     <Compile Include="Service References\PublisherService\Reference.cs">
@@ -63,6 +64,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Transformations\DeliveryInfoItemToDeliveryInfoMessage.cs" />
     <Compile Include="Transformations\EmailMessageItemToSendEmailMessage.cs" />
     <Compile Include="UserProvider.cs" />
     <Compile Include="OrderProvider.cs" />

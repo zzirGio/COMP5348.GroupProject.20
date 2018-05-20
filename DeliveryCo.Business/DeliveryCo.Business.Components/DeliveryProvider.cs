@@ -6,6 +6,9 @@ using DeliveryCo.Business.Components.Interfaces;
 using System.Transactions;
 using DeliveryCo.Business.Entities;
 using System.Threading;
+using DeliveryCo.Business.Components.Model;
+using DeliveryCo.Business.Components.PublisherService;
+using DeliveryCo.Business.Components.Transformations;
 using DeliveryCo.Services.Interfaces;
 
 
@@ -13,7 +16,7 @@ namespace DeliveryCo.Business.Components
 {
     public class DeliveryProvider : IDeliveryProvider
     {
-        public Guid SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo)
+        public void SubmitDelivery(DeliveryCo.Business.Entities.DeliveryInfo pDeliveryInfo)
         {
             using(TransactionScope lScope = new TransactionScope())
             using(DeliveryDataModelContainer lContainer = new DeliveryDataModelContainer())
@@ -25,7 +28,13 @@ namespace DeliveryCo.Business.Components
                 ThreadPool.QueueUserWorkItem(new WaitCallback((pObj) => ScheduleDelivery(pDeliveryInfo)));
                 lScope.Complete();
             }
-            return pDeliveryInfo.DeliveryIdentifier;
+            
+            DeliverySubmittedInfo lItem = new DeliverySubmittedInfo {Succesful = true};
+            DeliverySubmittedInfoToDeliverySubmittedNotification lVisitor = 
+                new DeliverySubmittedInfoToDeliverySubmittedNotification(pDeliveryInfo.DeliveryIdentifier);
+            lVisitor.Visit(lItem);
+            PublisherServiceClient lClient = new PublisherServiceClient();
+            lClient.Publish(lVisitor.Result);
         }
 
         private void ScheduleDelivery(DeliveryInfo pDeliveryInfo)
@@ -37,10 +46,12 @@ namespace DeliveryCo.Business.Components
             using (DeliveryDataModelContainer lContainer = new DeliveryDataModelContainer())
             {
                 pDeliveryInfo.Status = 1;
-                IDeliveryNotificationService lService = DeliveryNotificationServiceFactory.GetDeliveryNotificationService(pDeliveryInfo.DeliveryNotificationAddress);
-                lService.NotifyDeliveryCompletion(pDeliveryInfo.DeliveryIdentifier, DeliveryInfoStatus.Delivered);
+                DeliveryCompletedInfo lItem = new DeliveryCompletedInfo { DeliveryInfo = pDeliveryInfo };
+                DeliveryCompletedInfoToDeliveryCompletedNotification lVisitor = new DeliveryCompletedInfoToDeliveryCompletedNotification();
+                lVisitor.Visit(lItem);
+                PublisherServiceClient lClient = new PublisherServiceClient();
+                lClient.Publish(lVisitor.Result);
             }
-
         }
     }
 }

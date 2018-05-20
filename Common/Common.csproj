@@ -50,7 +50,10 @@
     <Compile Include="ISubscriberService.cs" />
     <Compile Include="IVisitable.cs" />
     <Compile Include="IVisitor.cs" />
+    <Compile Include="Model\DeliveryCompletedNotification.cs" />
+    <Compile Include="Model\DeliverySubmittedNotification.cs" />
     <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\DeliveryInfoMessage.cs" />
     <Compile Include="Model\PriceChangeMessage.cs" />
     <Compile Include="Model\SendEmailMessage.cs" />
     <Compile Include="Model\TransferCompleteMessage.cs" />

@@ -8,7 +8,9 @@ using System.Transactions;
 using Common.Model;
 using Microsoft.Practices.ServiceLocation;
 using DeliveryCo.MessageTypes;
+using VideoStore.Business.Components.Model;
 using VideoStore.Business.Components.PublisherService;
+using VideoStore.Business.Components.Transformations;
 
 namespace VideoStore.Business.Components
 {
@@ -191,19 +193,40 @@ namespace VideoStore.Business.Components
 
         private void PlaceDeliveryForOrder(Order pOrder)
         {
-            Delivery lDelivery = new Delivery() { DeliveryStatus = DeliveryStatus.Submitted, SourceAddress = "Video Store Address", DestinationAddress = pOrder.Customer.Address, Order = pOrder };
-
-            Guid lDeliveryIdentifier = ExternalServiceFactory.Instance.DeliveryService.SubmitDelivery(new DeliveryInfo()
-            { 
-                OrderNumber = lDelivery.Order.OrderNumber.ToString(),  
-                SourceAddress = lDelivery.SourceAddress,
-                DestinationAddress = lDelivery.DestinationAddress,
+            DeliveryInfoItem lItem = new DeliveryInfoItem()
+            {
+                OrderNumber = pOrder.OrderNumber.ToString(),
+                SourceAddress = "Video Store Address",
+                DestinationAddress = pOrder.Customer.Address,
                 DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
-            });
+            };
+            DeliveryInfoItemToDeliveryInfoMessage lVisitor = new DeliveryInfoItemToDeliveryInfoMessage();
+            lVisitor.Visit(lItem);
+            PublisherServiceClient lClient = new PublisherServiceClient();
+            lClient.Publish(lVisitor.Result);
+        }
 
-            lDelivery.ExternalDeliveryIdentifier = lDeliveryIdentifier;
-            pOrder.Delivery = lDelivery;
-            
+        private void DeliverySubmitted(Guid pOrderNumber, Guid pDeliveryIdentifier)
+        {
+            using (TransactionScope lScope = new TransactionScope())
+            {
+                using (VideoStoreEntityModelContainer lContainer = new VideoStoreEntityModelContainer())
+                {
+                    
+                    Order order = lContainer.Orders.FirstOrDefault(x => x.OrderNumber.Equals(pOrderNumber));
+                    Delivery lDelivery = new Delivery()
+                    {
+                        DeliveryStatus = DeliveryStatus.Submitted,
+                        SourceAddress = "Video Store Address",
+                        DestinationAddress = order.Customer.Address,
+                        Order = order,
+                        ExternalDeliveryIdentifier = pDeliveryIdentifier
+                    };
+
+                    lContainer.SaveChanges();
+                    lScope.Complete();
+                }
+            }
         }
 
         private void TransferFundsFromCustomer(int pCustomerAccountNumber, double pTotal, Guid pOrderGuid, int pCustomerId)
