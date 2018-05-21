@@ -39,7 +39,7 @@ namespace VideoStore.Business.Components
                         Console.WriteLine("Saving temporary");
 
                         pOrder.OrderNumber = Guid.NewGuid();
-                        pOrder.UpdateStockLevels();
+
                         lContainer.Orders.ApplyChanges(pOrder);
 
                         TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0, pOrder.OrderNumber, pOrder.Customer.Id);
@@ -105,7 +105,6 @@ namespace VideoStore.Business.Components
                         pOrder.Customer = lContainer.Users.First(x => x.Id == message.CustomerId);
 
                         PlaceDeliveryForOrder(pOrder);
-                        SendOrderPlacedConfirmation(pOrder); // TODO: might need to defer this until DeliveryCo sends back 'Submitted' Request
 
                         lContainer.SaveChanges();
                         lScope.Complete();
@@ -129,22 +128,25 @@ namespace VideoStore.Business.Components
                     try
                     {
                         Console.WriteLine("Funds Transfer Error");
-                        var pOrder = lContainer.Orders.First(x => x.OrderNumber == message.OrderGuid);
-                        pOrder.MarkAsDeleted();
-
+                        var pOrder = lContainer.Orders
+                            .Include("Customer").FirstOrDefault(x => x.OrderNumber == message.OrderGuid);
+//                            .Include("Customer.LoginCredential")
+//                            .Include("OrderItems")
+//                            .Include("OrderItems.Media")
+                        /*
                         LoadMediaStocks(pOrder);
                         MarkAppropriateUnchangedAssociations(pOrder);
-
+                        pOrder.Customer.Orders.Remove(pOrder);
                         lContainer.Orders.ApplyChanges(pOrder);
-                        pOrder.UpdateStockLevels();
-                        lContainer.SaveChanges();
-                        lScope.Complete();
-
+//                        pOrder.UpdateStockLevels();
+                        pOrder.MarkAsDeleted();*/
                         EmailProvider.SendMessage(new EmailMessage()
                         {
                             ToAddress = pOrder.Customer.Email,
                             Message = "There was an error with your credit. The purchase cannot proceed."
                         });
+                        lContainer.SaveChanges();
+                        lScope.Complete();
                     }
                     catch(Exception lException)
                     {
@@ -172,7 +174,8 @@ namespace VideoStore.Business.Components
             {
                 foreach (OrderItem lOrder in pOrder.OrderItems)
                 {
-                    lOrder.Media.Stocks = lContainer.Stocks.Where((pStock) => pStock.Media.Id == lOrder.Media.Id).FirstOrDefault();    
+                    lOrder.Media.Stocks = lContainer.Stocks.Where((pStock) => pStock.Media.Id == lOrder.Media.Id)
+                        .FirstOrDefault();
                 }
             }
         }
@@ -225,7 +228,10 @@ namespace VideoStore.Business.Components
                 using (VideoStoreEntityModelContainer lContainer = new VideoStoreEntityModelContainer())
                 {
 
-                    Order order = lContainer.Orders.Include("Customer").FirstOrDefault(x => x.OrderNumber == pOrderNumber);
+                    Order order = lContainer.Orders.Include("Customer")
+                        .Include("OrderItems")
+                        .Include("OrderItems.Media")
+                        .Include("OrderItems.Media.Stocks").FirstOrDefault(x => x.OrderNumber == pOrderNumber);
                     Delivery lDelivery = new Delivery()
                     {
                         DeliveryStatus = DeliveryStatus.Submitted,
@@ -235,6 +241,8 @@ namespace VideoStore.Business.Components
                         ExternalDeliveryIdentifier = pDeliveryIdentifier
                     };
                     order.Delivery = lDelivery;
+                    order.UpdateStockLevels();
+                    SendOrderPlacedConfirmation(order);
                     lContainer.SaveChanges();
                     lScope.Complete();
                 }
