@@ -118,6 +118,9 @@
     <None Include="Service References\PublisherService\service1.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\PublisherService\System.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\PublisherService\" />

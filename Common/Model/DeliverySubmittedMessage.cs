@@ -7,7 +7,7 @@ namespace Common.Model
     public class DeliverySubmittedMessage : Message
     {
         [DataMember]
-        public string OrderNumber { get; set; }
+        public Guid OrderNumber { get; set; }
 
         [DataMember]
         public Guid DeliveryId { get; set; }

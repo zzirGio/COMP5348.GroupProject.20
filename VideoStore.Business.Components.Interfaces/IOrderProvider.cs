@@ -14,6 +14,6 @@ namespace VideoStore.Business.Components.Interfaces
         void FundsTransferCompleted(TransferCompleteMessage message);
         void FundsTransferFailed(TransferErrorMessage message);
 
-        void DeliverySubmitted(string pOrderNumber, Guid pDeliveryIdentifier);
+        void DeliverySubmitted(Guid pOrderNumber, Guid pDeliveryIdentifier);
     }
 }

@@ -1,24 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:tns="http://schemas.datacontract.org/2004/07/Common.Model" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/Common.Model" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:import namespace="http://schemas.datacontract.org/2004/07/System" />
   <xs:complexType name="Message">
     <xs:sequence>
       <xs:element minOccurs="0" name="Topic" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Message" nillable="true" type="tns:Message" />
-  <xs:complexType name="PriceChangeMessage">
-    <xs:complexContent mixed="false">
-      <xs:extension base="tns:Message">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="Change" type="xs:double" />
-          <xs:element minOccurs="0" name="Item" nillable="true" type="xs:string" />
-          <xs:element minOccurs="0" name="Price" type="xs:double" />
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-  <xs:element name="PriceChangeMessage" nillable="true" type="tns:PriceChangeMessage" />
   <xs:complexType name="SendEmailMessage">
     <xs:complexContent mixed="false">
       <xs:extension base="tns:Message">
@@ -34,7 +23,7 @@
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="SendEmailMessage" nillable="true" type="tns:SendEmailMessage" />
-  <xs:complexType name="OrderDeliveryMessage">
+  <xs:complexType name="DeliveryInfoMessage">
     <xs:complexContent mixed="false">
       <xs:extension base="tns:Message">
         <xs:sequence>
@@ -48,5 +37,67 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:element name="OrderDeliveryMessage" nillable="true" type="tns:OrderDeliveryMessage" />
+  <xs:element name="DeliveryInfoMessage" nillable="true" type="tns:DeliveryInfoMessage" />
+  <xs:complexType name="DeliverySubmittedMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Message">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="DeliveryId" type="ser:guid" />
+          <xs:element minOccurs="0" name="OrderNumber" type="ser:guid" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="DeliverySubmittedMessage" nillable="true" type="tns:DeliverySubmittedMessage" />
+  <xs:complexType name="DeliveryCompletedMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Message">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="DeliveryIdentifier" type="ser:guid" />
+          <xs:element minOccurs="0" name="DeliveryNotificationAddress" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="DestinationAddress" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="OrderNumber" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="SourceAddress" nillable="true" type="xs:string" />
+          <xs:element minOccurs="0" name="Status" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="DeliveryCompletedMessage" nillable="true" type="tns:DeliveryCompletedMessage" />
+  <xs:complexType name="TransferCompleteMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Message">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CustomerId" type="xs:int" />
+          <xs:element minOccurs="0" name="OrderGuid" type="ser:guid" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TransferCompleteMessage" nillable="true" type="tns:TransferCompleteMessage" />
+  <xs:complexType name="TransferErrorMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Message">
+        <xs:sequence>
+          <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="Error" nillable="true" type="q1:Exception" />
+          <xs:element minOccurs="0" name="OrderGuid" type="ser:guid" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TransferErrorMessage" nillable="true" type="tns:TransferErrorMessage" />
+  <xs:complexType name="TransferRequestMessage">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:Message">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Amount" type="xs:double" />
+          <xs:element minOccurs="0" name="CustomerId" type="xs:int" />
+          <xs:element minOccurs="0" name="FromAccountNumber" type="xs:int" />
+          <xs:element minOccurs="0" name="OrderGuid" type="ser:guid" />
+          <xs:element minOccurs="0" name="ToAccountNumber" type="xs:int" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TransferRequestMessage" nillable="true" type="tns:TransferRequestMessage" />
 </xs:schema>

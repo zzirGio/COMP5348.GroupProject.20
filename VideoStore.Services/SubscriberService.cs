@@ -29,14 +29,14 @@ namespace VideoStore.Services
             {
                 DeliverySubmittedMessage lMessage = pMessage as DeliverySubmittedMessage;
                 var lVisitor = new DeliverySubmittedMessageToDeliverySubmittedItem();
-                pMessage.Accept(lVisitor);
+                lMessage.Accept(lVisitor);
                 oService.DeliverySubmitted(lVisitor.Result);
             }
             else if (pMessage.GetType() == typeof(DeliveryCompletedMessage))
             {
                 DeliveryCompletedMessage lMessage = pMessage as DeliveryCompletedMessage;
                 var lVisitor = new DeliveryCompletedMessageToDeliveryCompletedItem();
-                pMessage.Accept(lVisitor);
+                lMessage.Accept(lVisitor);
                 dnService.NotifyDeliveryCompletion(lVisitor.Result.DeliveryIdentifier, (DeliveryInfoStatus)lVisitor.Result.Status);
             }
         }

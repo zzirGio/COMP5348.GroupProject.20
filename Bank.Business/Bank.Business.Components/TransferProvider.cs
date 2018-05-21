@@ -56,7 +56,7 @@ namespace Bank.Business.Components
                     PublisherServiceClient lClient = new PublisherServiceClient();
                     lClient.Publish(message);
 
-                    throw;
+//                    throw; TODO: delete this, stops the message from being published
                 }
 
                 lContainer.SaveChanges();

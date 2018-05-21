@@ -10,21 +10,20 @@ namespace VideoStore.Business.Components.Transformations
         public DeliveryInfoMessage Result { get; set; }
         public void Visit(IVisitable pVisitable)
         {
-            throw new NotImplementedException();
-//            if (pVisitable is DeliveryInfoItem)
-//            {
-//                DeliveryInfoItem lItem = pVisitable as DeliveryInfoItem;
-//                DeliveryInfoMessage Result = new DeliveryInfoMessage
-//                {
-//                    SourceAddress = lItem.SourceAddress,
-//                    DestinationAddress = lItem.DestinationAddress,
-//                    OrderNumber = lItem.OrderNumber,
-//                    DeliveryIdentifier = lItem.DeliveryIdentifier,
-//                    DeliveryNotificationAddress = lItem.DeliveryNotificationAddress,
-//                    Status = lItem.Status,
-//                    Topic = lItem.Topic
-//                };
-//            }
+            if (pVisitable is DeliveryInfoItem)
+            {
+                DeliveryInfoItem lItem = pVisitable as DeliveryInfoItem;
+                Result = new DeliveryInfoMessage
+                {
+                    SourceAddress = lItem.SourceAddress,
+                    DestinationAddress = lItem.DestinationAddress,
+                    OrderNumber = lItem.OrderNumber,
+                    DeliveryIdentifier = lItem.DeliveryIdentifier,
+                    DeliveryNotificationAddress = lItem.DeliveryNotificationAddress,
+                    Status = lItem.Status,
+                    Topic = lItem.Topic
+                };
+            }
         }
     }
 }

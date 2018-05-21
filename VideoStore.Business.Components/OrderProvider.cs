@@ -105,7 +105,7 @@ namespace VideoStore.Business.Components
                         pOrder.Customer = lContainer.Users.First(x => x.Id == message.CustomerId);
 
                         PlaceDeliveryForOrder(pOrder);
-                        SendOrderPlacedConfirmation(pOrder);
+                        SendOrderPlacedConfirmation(pOrder); // TODO: might need to defer this until DeliveryCo sends back 'Submitted' Request
 
                         lContainer.SaveChanges();
                         lScope.Complete();
@@ -205,28 +205,27 @@ namespace VideoStore.Business.Components
 
         private void PlaceDeliveryForOrder(Order pOrder)
         {
-            // TODO: implemenmt model and transformation for publishing delivery info
-//            DeliveryInfoItem lItem = new DeliveryInfoItem()
-//            {
-//                OrderNumber = pOrder.OrderNumber.ToString(),
-//                SourceAddress = "Video Store Address",
-//                DestinationAddress = pOrder.Customer.Address,
-//                DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
-//            };
-//            DeliveryInfoItemToDeliveryInfoMessage lVisitor = new DeliveryInfoItemToDeliveryInfoMessage();
-//            lVisitor.Visit(lItem);
-//            PublisherServiceClient lClient = new PublisherServiceClient();
-//            lClient.Publish(lVisitor.Result);
+            DeliveryInfoItem lItem = new DeliveryInfoItem()
+            {
+                OrderNumber = pOrder.OrderNumber.ToString(),
+                SourceAddress = "Video Store Address",
+                DestinationAddress = pOrder.Customer.Address,
+                DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
+            };
+            DeliveryInfoItemToDeliveryInfoMessage lVisitor = new DeliveryInfoItemToDeliveryInfoMessage();
+            lVisitor.Visit(lItem);
+            PublisherServiceClient lClient = new PublisherServiceClient();
+            lClient.Publish(lVisitor.Result);
         }
 
-        public void DeliverySubmitted(string pOrderNumer, Guid pDeliveryIdentifier)
+        public void DeliverySubmitted(Guid pOrderNumber, Guid pDeliveryIdentifier)
         {
             using (TransactionScope lScope = new TransactionScope())
             {
                 using (VideoStoreEntityModelContainer lContainer = new VideoStoreEntityModelContainer())
                 {
 
-                    Order order = lContainer.Orders.FirstOrDefault(x => x.OrderNumber.Equals(pOrderNumer));
+                    Order order = lContainer.Orders.Include("Customer").FirstOrDefault(x => x.OrderNumber == pOrderNumber);
                     Delivery lDelivery = new Delivery()
                     {
                         DeliveryStatus = DeliveryStatus.Submitted,
@@ -246,6 +245,7 @@ namespace VideoStore.Business.Components
         {
             try
             {
+                // TODO: Need to start from a local message, then apply transformation to Common.Model model
                 PublisherServiceClient lClient = new PublisherServiceClient();
                 var message = new TransferRequestMessage
                 {

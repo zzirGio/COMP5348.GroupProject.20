@@ -19,7 +19,7 @@ namespace Bank.Process
 {
     class Program
     {
-//        private static readonly String sPublishQueuePath = ".\\private$\\TransferService"; TODO: delete dis
+        private static readonly String sPublishQueuePath = ".\\private$\\TransferService";
 
         private static global::Common.SubscriberServiceHost mHost;
         private const String cAddress = "net.msmq://localhost/private/BankQueueTransacted";
@@ -29,7 +29,7 @@ namespace Bank.Process
         {
             ResolveDependencies();
             CreateDummyEntities();
-            // EnsureQueueExists(); // TODO: delete dis
+            EnsureQueueExists();
             HostSubscriberService();
             SubscribeForEvents();
             HostServices();
@@ -46,13 +46,12 @@ namespace Bank.Process
             lClient.Subscribe("TransferRequest", cAddress);
         }
 
-        // TODO: delete dis
-//        private static void EnsureQueueExists()
-//        {
-//            // Create the transacted MSMQ queue if necessary.
-//            if (!MessageQueue.Exists(sPublishQueuePath))
-//                MessageQueue.Create(sPublishQueuePath, true);
-//        }
+        private static void EnsureQueueExists()
+        {
+            // Create the transacted MSMQ queue if necessary.
+            if (!MessageQueue.Exists(sPublishQueuePath))
+                MessageQueue.Create(sPublishQueuePath, true);
+        }
 
         private static void HostServices()
         {
@@ -72,11 +71,11 @@ namespace Bank.Process
                 if (lContainer.Accounts.Count() == 0)
                 {
                     Customer lVideoStore = new Customer();
-                    Account lVSAccount = new Account() { AccountNumber = 123, Balance = 10000 };
+                    Account lVSAccount = new Account() { AccountNumber = 123, Balance = 0 };
                     lVideoStore.Accounts.Add(lVSAccount);
 
                     Customer lCustomer = new Customer();
-                    Account lCustAccount = new Account() { AccountNumber = 456, Balance = 2000000 };
+                    Account lCustAccount = new Account() { AccountNumber = 456, Balance = 20 };
                     lCustomer.Accounts.Add(lCustAccount);
 
 

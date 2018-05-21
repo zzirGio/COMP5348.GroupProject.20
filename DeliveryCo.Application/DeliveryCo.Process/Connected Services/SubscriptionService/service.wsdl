@@ -90,7 +90,7 @@
       <wsa10:EndpointReference>
         <wsa10:Address>net.tcp://localhost:9011/SubscriptionService</wsa10:Address>
         <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
-          <Upn>GIO-DESKTOP\sergi</Upn>
+          <Upn>GIO-SB\sergi</Upn>
         </Identity>
       </wsa10:EndpointReference>
     </wsdl:port>
