@@ -8,14 +8,13 @@ namespace DeliveryCo.Services
     {
         public void PublishToSubscriber(Common.Model.Message pMessage)
         {
+            DeliveryService dService = new DeliveryService();
             if (pMessage is DeliveryInfoMessage)
             {
                 DeliveryInfoMessage lMessage = pMessage as DeliveryInfoMessage;
                 DeliveryInfoMessageToDeliveryInfo lVisitor = new DeliveryInfoMessageToDeliveryInfo();
-                pMessage.Accept(lVisitor);
-
-                DeliveryService deliveryService = new DeliveryService();
-                deliveryService.SubmitDelivery(lVisitor.Result);
+                lMessage.Accept(lVisitor);
+                dService.SubmitDelivery(lVisitor.Result);
             }
         }
     }

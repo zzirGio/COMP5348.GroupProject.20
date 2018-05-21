@@ -1,22 +1,19 @@
 ﻿using System;
-using System.Runtime.Serialization;
+using Common;
 
-namespace Common.Model
+namespace VideoStore.Services.MessageTypes.Model
 {
-    [DataContract]
-    public class DeliveryCompletedNotification : Message
+    public class DeliveryCompletedItem : IVisitable 
     {
-        [DataMember]
         public String SourceAddress { get; set; }
-        [DataMember]
         public String DestinationAddress { get; set; }
-        [DataMember]
         public String OrderNumber { get; set; }
-        [DataMember]
         public Guid DeliveryIdentifier { get; set; }
-        [DataMember]
         public String DeliveryNotificationAddress { get; set; }
-        [DataMember]
         public Int32 Status { get; set; }
+        public void Accept(IVisitor pVisitor)
+        {
+            pVisitor.Visit(this);
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Common;
 using Common.Model;
-using VideoStore.Business.Components.Model;
+using VideoStore.Business.Entities.Model;
 
 namespace VideoStore.Business.Components.Transformations
 {

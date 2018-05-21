@@ -5,6 +5,7 @@ using System.Text;
 using System.ServiceModel;
 using VideoStore.Services.MessageTypes;
 using Common.Model;
+using VideoStore.Services.MessageTypes.Model;
 
 namespace VideoStore.Services.Interfaces
 {
@@ -20,5 +21,8 @@ namespace VideoStore.Services.Interfaces
 
         [OperationContract]
         void FundsTransferFailed(TransferErrorMessage message);
+
+        [OperationContract]
+        void DeliverySubmitted(DeliverySubmittedItem pItem);
     }
 }

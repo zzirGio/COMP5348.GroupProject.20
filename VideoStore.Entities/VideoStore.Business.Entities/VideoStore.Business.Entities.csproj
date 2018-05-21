@@ -61,6 +61,7 @@
     <Compile Include="Media.cs">
       <DependentUpon>VideoEntityModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Model\EmailMessageItem.cs" />
     <Compile Include="Order.cs">
       <DependentUpon>VideoEntityModel.tt</DependentUpon>
     </Compile>

@@ -8,9 +8,9 @@ using System.Transactions;
 using Common.Model;
 using Microsoft.Practices.ServiceLocation;
 using DeliveryCo.MessageTypes;
-using VideoStore.Business.Components.Model;
 using VideoStore.Business.Components.PublisherService;
 using VideoStore.Business.Components.Transformations;
+using VideoStore.Business.Entities.Model;
 
 namespace VideoStore.Business.Components
 {
@@ -139,6 +139,12 @@ namespace VideoStore.Business.Components
                         pOrder.UpdateStockLevels();
                         lContainer.SaveChanges();
                         lScope.Complete();
+
+                        EmailProvider.SendMessage(new EmailMessage()
+                        {
+                            ToAddress = pOrder.Customer.Email,
+                            Message = "There was an error with your credit. The purchase cannot proceed."
+                        });
                     }
                     catch(Exception lException)
                     {
@@ -180,6 +186,9 @@ namespace VideoStore.Business.Components
                 ToAddress = pOrder.Customer.Email,
                 Message = "There was an error in processsing your order " + pOrder.OrderNumber + ": "+ pException.Message +". Please contact Video Store"
             });
+//            var toAddress = pOrder.Customer.Email;
+//            var message = "There was an error in processsing your order " + pOrder.OrderNumber + ": " + pException.Message + ". Please contact Video Store";
+//            PublishEmailMessage(toAddress, message);
         }
 
         private void SendOrderPlacedConfirmation(Order pOrder)
@@ -189,31 +198,35 @@ namespace VideoStore.Business.Components
                 ToAddress = pOrder.Customer.Email,
                 Message = "Your order " + pOrder.OrderNumber + " has been placed"
             });
+//            var toAddress = pOrder.Customer.Email;
+//            var message = "Your order " + pOrder.OrderNumber + " has been placed";
+//            PublishEmailMessage(toAddress, message);
         }
 
         private void PlaceDeliveryForOrder(Order pOrder)
         {
-            DeliveryInfoItem lItem = new DeliveryInfoItem()
-            {
-                OrderNumber = pOrder.OrderNumber.ToString(),
-                SourceAddress = "Video Store Address",
-                DestinationAddress = pOrder.Customer.Address,
-                DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
-            };
-            DeliveryInfoItemToDeliveryInfoMessage lVisitor = new DeliveryInfoItemToDeliveryInfoMessage();
-            lVisitor.Visit(lItem);
-            PublisherServiceClient lClient = new PublisherServiceClient();
-            lClient.Publish(lVisitor.Result);
+            // TODO: implemenmt model and transformation for publishing delivery info
+//            DeliveryInfoItem lItem = new DeliveryInfoItem()
+//            {
+//                OrderNumber = pOrder.OrderNumber.ToString(),
+//                SourceAddress = "Video Store Address",
+//                DestinationAddress = pOrder.Customer.Address,
+//                DeliveryNotificationAddress = "net.tcp://localhost:9010/DeliveryNotificationService"
+//            };
+//            DeliveryInfoItemToDeliveryInfoMessage lVisitor = new DeliveryInfoItemToDeliveryInfoMessage();
+//            lVisitor.Visit(lItem);
+//            PublisherServiceClient lClient = new PublisherServiceClient();
+//            lClient.Publish(lVisitor.Result);
         }
 
-        private void DeliverySubmitted(Guid pOrderNumber, Guid pDeliveryIdentifier)
+        public void DeliverySubmitted(string pOrderNumer, Guid pDeliveryIdentifier)
         {
             using (TransactionScope lScope = new TransactionScope())
             {
                 using (VideoStoreEntityModelContainer lContainer = new VideoStoreEntityModelContainer())
                 {
-                    
-                    Order order = lContainer.Orders.FirstOrDefault(x => x.OrderNumber.Equals(pOrderNumber));
+
+                    Order order = lContainer.Orders.FirstOrDefault(x => x.OrderNumber.Equals(pOrderNumer));
                     Delivery lDelivery = new Delivery()
                     {
                         DeliveryStatus = DeliveryStatus.Submitted,
@@ -222,7 +235,7 @@ namespace VideoStore.Business.Components
                         Order = order,
                         ExternalDeliveryIdentifier = pDeliveryIdentifier
                     };
-
+                    order.Delivery = lDelivery;
                     lContainer.SaveChanges();
                     lScope.Complete();
                 }

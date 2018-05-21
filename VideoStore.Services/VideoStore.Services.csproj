@@ -64,6 +64,8 @@
     <Compile Include="MessageTypeConverter.cs" />
     <Compile Include="RoleService.cs" />
     <Compile Include="SubscriberService.cs" />
+    <Compile Include="Transformations\DeliveryCompletedMessageToDeliveryCompletedItem.cs" />
+    <Compile Include="Transformations\DeliverySubmittedMessageToDeliverySubmittedItem.cs" />
     <Compile Include="UserService.cs" />
     <Compile Include="OrderService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

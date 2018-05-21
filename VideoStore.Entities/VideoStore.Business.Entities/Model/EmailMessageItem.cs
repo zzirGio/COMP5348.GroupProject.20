@@ -1,7 +1,7 @@
 ﻿using System;
 using Common;
 
-namespace VideoStore.Business.Components.Model
+namespace VideoStore.Business.Entities.Model
 {
     public class EmailMessageItem : IVisitable
     {

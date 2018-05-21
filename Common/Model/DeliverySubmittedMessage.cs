@@ -4,12 +4,14 @@ using System.Runtime.Serialization;
 namespace Common.Model
 {
     [DataContract]
-    public class DeliverySubmittedNotification : Message
+    public class DeliverySubmittedMessage : Message
     {
         [DataMember]
-        public bool Successful { get; set; }
+        public string OrderNumber { get; set; }
 
         [DataMember]
         public Guid DeliveryId { get; set; }
+
+
     }
 }

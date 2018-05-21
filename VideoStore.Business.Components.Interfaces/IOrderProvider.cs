@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using VideoStore.Business.Entities;
+using VideoStore.Business.Entities.Model;
 
 namespace VideoStore.Business.Components.Interfaces
 {
@@ -12,5 +13,7 @@ namespace VideoStore.Business.Components.Interfaces
         void SubmitOrder(Order pOrder);
         void FundsTransferCompleted(TransferCompleteMessage message);
         void FundsTransferFailed(TransferErrorMessage message);
+
+        void DeliverySubmitted(string pOrderNumber, Guid pDeliveryIdentifier);
     }
 }

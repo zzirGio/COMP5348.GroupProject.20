@@ -19,7 +19,7 @@ namespace Bank.Process
 {
     class Program
     {
-        private static readonly String sPublishQueuePath = ".\\private$\\TransferService";
+//        private static readonly String sPublishQueuePath = ".\\private$\\TransferService"; TODO: delete dis
 
         private static global::Common.SubscriberServiceHost mHost;
         private const String cAddress = "net.msmq://localhost/private/BankQueueTransacted";
@@ -29,7 +29,7 @@ namespace Bank.Process
         {
             ResolveDependencies();
             CreateDummyEntities();
-            EnsureQueueExists();
+            // EnsureQueueExists(); // TODO: delete dis
             HostSubscriberService();
             SubscribeForEvents();
             HostServices();
@@ -46,12 +46,13 @@ namespace Bank.Process
             lClient.Subscribe("TransferRequest", cAddress);
         }
 
-        private static void EnsureQueueExists()
-        {
-            // Create the transacted MSMQ queue if necessary.
-            if (!MessageQueue.Exists(sPublishQueuePath))
-                MessageQueue.Create(sPublishQueuePath, true);
-        }
+        // TODO: delete dis
+//        private static void EnsureQueueExists()
+//        {
+//            // Create the transacted MSMQ queue if necessary.
+//            if (!MessageQueue.Exists(sPublishQueuePath))
+//                MessageQueue.Create(sPublishQueuePath, true);
+//        }
 
         private static void HostServices()
         {

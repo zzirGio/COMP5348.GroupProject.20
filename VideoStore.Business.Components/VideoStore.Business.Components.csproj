@@ -56,8 +56,6 @@
     <Compile Include="DeliveryNotificationProvider.cs" />
     <Compile Include="EmailProvider.cs" />
     <Compile Include="ExternalServiceFactory.cs" />
-    <Compile Include="Model\DeliveryInfoItem.cs" />
-    <Compile Include="Model\EmailMessageItem.cs" />
     <Compile Include="RoleProvider.cs" />
     <Compile Include="Service References\PublisherService\Reference.cs">
       <AutoGen>True</AutoGen>

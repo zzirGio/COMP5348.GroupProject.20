@@ -9,7 +9,7 @@ namespace DeliveryCo.Business.Components.Transformations
     {
         private Guid mDeliveryId;
 
-        public DeliverySubmittedNotification Result { get; set; }
+        public DeliverySubmittedMessage Result { get; set; }
 
         public DeliverySubmittedInfoToDeliverySubmittedNotification(Guid pDeliveryId)
         {
@@ -21,9 +21,9 @@ namespace DeliveryCo.Business.Components.Transformations
             if (pVisitable is Model.DeliverySubmittedInfo)
             {
                 Model.DeliverySubmittedInfo lMsg = pVisitable as Model.DeliverySubmittedInfo;
-                Result = new Common.Model.DeliverySubmittedNotification()
+                Result = new Common.Model.DeliverySubmittedMessage()
                 {
-                    Successful = lMsg.Succesful,
+                    OrderNumber = lMsg.OrderNumber,
                     DeliveryId = mDeliveryId,
                     Topic = lMsg.Topic
                 };

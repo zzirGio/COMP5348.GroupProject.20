@@ -25,16 +25,17 @@ namespace DeliveryCo.Business.Components
                 pDeliveryInfo.Status = 0;
                 lContainer.DeliveryInfoes.AddObject(pDeliveryInfo);
                 lContainer.SaveChanges();
+
+                DeliverySubmittedInfo lItem = new DeliverySubmittedInfo { OrderNumber = pDeliveryInfo.OrderNumber };
+                DeliverySubmittedInfoToDeliverySubmittedNotification lVisitor =
+                    new DeliverySubmittedInfoToDeliverySubmittedNotification(pDeliveryInfo.DeliveryIdentifier);
+                lVisitor.Visit(lItem);
+                PublisherServiceClient lClient = new PublisherServiceClient();
+                lClient.Publish(lVisitor.Result);
+
                 ThreadPool.QueueUserWorkItem(new WaitCallback((pObj) => ScheduleDelivery(pDeliveryInfo)));
                 lScope.Complete();
             }
-            
-            DeliverySubmittedInfo lItem = new DeliverySubmittedInfo {Succesful = true};
-            DeliverySubmittedInfoToDeliverySubmittedNotification lVisitor = 
-                new DeliverySubmittedInfoToDeliverySubmittedNotification(pDeliveryInfo.DeliveryIdentifier);
-            lVisitor.Visit(lItem);
-            PublisherServiceClient lClient = new PublisherServiceClient();
-            lClient.Publish(lVisitor.Result);
         }
 
         private void ScheduleDelivery(DeliveryInfo pDeliveryInfo)

@@ -7,14 +7,14 @@ namespace DeliveryCo.Business.Components.Transformations
 {
     public class DeliveryCompletedInfoToDeliveryCompletedNotification : IVisitor
     {
-        public DeliveryCompletedNotification Result { get; set; }
+        public DeliveryCompletedMessage Result { get; set; }
 
         public void Visit(IVisitable pVisitable)
         {
             if (pVisitable is DeliveryCompletedInfo)
             {
                 DeliveryCompletedInfo lMsg = pVisitable as DeliveryCompletedInfo;
-                Result = new DeliveryCompletedNotification()
+                Result = new DeliveryCompletedMessage()
                 {
                     SourceAddress = lMsg.DeliveryInfo.SourceAddress,
                     DestinationAddress = lMsg.DeliveryInfo.DestinationAddress,
