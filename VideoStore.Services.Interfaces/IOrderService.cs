@@ -17,10 +17,10 @@ namespace VideoStore.Services.Interfaces
         void SubmitOrder(Order pOrder);
 
         [OperationContract]
-        void FundsTransferCompleted(TransferCompleteMessage message);
+        void FundsTransferCompleted(TransferCompleteItem pItem);
 
         [OperationContract]
-        void FundsTransferFailed(TransferErrorMessage message);
+        void FundsTransferFailed(TransferErrorItem pItem);
 
         [OperationContract]
         void DeliverySubmitted(DeliverySubmittedItem pItem);

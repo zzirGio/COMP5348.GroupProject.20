@@ -24,14 +24,14 @@ namespace VideoStore.Services
             }
         }
 
-        public void FundsTransferCompleted(TransferCompleteMessage message)
+        public void FundsTransferCompleted(TransferCompleteItem pItem)
         {
-            OrderProvider.FundsTransferCompleted(message);
+            OrderProvider.FundsTransferCompleted(pItem.OrderGuid);
         }
 
-        public void FundsTransferFailed(TransferErrorMessage message)
+        public void FundsTransferFailed(TransferErrorItem pItem)
         {
-            OrderProvider.FundsTransferFailed(message);
+            OrderProvider.FundsTransferFailed(pItem.OrderGuid);
         }
 
         public void DeliverySubmitted(DeliverySubmittedItem pItem)

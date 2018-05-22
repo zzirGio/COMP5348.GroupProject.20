@@ -92,7 +92,7 @@ namespace VideoStore.Business.Components
             SendOrderPlacedConfirmation(pOrder);*/
         }
 
-        public void FundsTransferCompleted(TransferCompleteMessage message)
+        public void FundsTransferCompleted(Guid pOrderGuid)
         {
             using (TransactionScope lScope = new TransactionScope())
             {
@@ -101,8 +101,8 @@ namespace VideoStore.Business.Components
                     try
                     {
                         Console.WriteLine("Funds Transfer Complete");
-                        var pOrder = lContainer.Orders.First(x => x.OrderNumber == message.OrderGuid);
-                        pOrder.Customer = lContainer.Users.First(x => x.Id == message.CustomerId);
+                        var pOrder = lContainer.Orders.Include("Customer").First(x => x.OrderNumber == pOrderGuid);
+                        //pOrder.Customer = lContainer.Users.First(x => x.Id == message.CustomerId);
 
                         PlaceDeliveryForOrder(pOrder);
 
@@ -119,7 +119,7 @@ namespace VideoStore.Business.Components
             
         }
 
-        public void FundsTransferFailed(TransferErrorMessage message)
+        public void FundsTransferFailed(Guid pOrderGuid)
         {
             using (TransactionScope lScope = new TransactionScope())
             {
@@ -129,7 +129,7 @@ namespace VideoStore.Business.Components
                     {
                         Console.WriteLine("Funds Transfer Error");
                         var pOrder = lContainer.Orders
-                            .Include("Customer").FirstOrDefault(x => x.OrderNumber == message.OrderGuid);
+                            .Include("Customer").FirstOrDefault(x => x.OrderNumber == pOrderGuid);
 //                            .Include("Customer.LoginCredential")
 //                            .Include("OrderItems")
 //                            .Include("OrderItems.Media")
@@ -253,18 +253,18 @@ namespace VideoStore.Business.Components
         {
             try
             {
-                // TODO: Need to start from a local message, then apply transformation to Common.Model model
-                PublisherServiceClient lClient = new PublisherServiceClient();
-                var message = new TransferRequestMessage
+                TransferRequestItem lItem = new TransferRequestItem
                 {
-                    Topic = "TransferRequest",
                     Amount = pTotal,
                     FromAccountNumber = pCustomerAccountNumber,
                     ToAccountNumber = RetrieveVideoStoreAccountNumber(),
                     OrderGuid = pOrderGuid,
                     CustomerId = pCustomerId
                 };
-                lClient.Publish(message);
+                TransferRequestItemToTransferRequestMessage lVisitor = new TransferRequestItemToTransferRequestMessage();
+                lVisitor.Visit(lItem);
+                PublisherServiceClient lClient = new PublisherServiceClient();
+                lClient.Publish(lVisitor.Result);
             }
             catch(Exception e)
             {

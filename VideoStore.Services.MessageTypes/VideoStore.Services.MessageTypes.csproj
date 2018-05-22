@@ -50,6 +50,8 @@
     <Compile Include="Model\DeliveryCompletedItem.cs" />
     <Compile Include="Model\DeliveryInfoItem.cs" />
     <Compile Include="Model\DeliverySubmittedItem.cs" />
+    <Compile Include="Model\TransferCompleteItem.cs" />
+    <Compile Include="Model\TransferErrorItem.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="OrderItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

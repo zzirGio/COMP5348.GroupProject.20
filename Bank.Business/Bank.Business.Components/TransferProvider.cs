@@ -8,6 +8,8 @@ using System.Transactions;
 using Bank.Services.Interfaces;
 using Bank.Business.Components.PublisherService;
 using Common.Model;
+using Bank.Business.Components.Model;
+using Bank.Business.Components.Transformations;
 
 namespace Bank.Business.Components
 {
@@ -32,31 +34,30 @@ namespace Bank.Business.Components
                     lContainer.ObjectStateManager.ChangeObjectState(lFromAcct, System.Data.EntityState.Modified);
                     lContainer.ObjectStateManager.ChangeObjectState(lToAcct, System.Data.EntityState.Modified);
 
-                    TransferCompleteMessage message = new TransferCompleteMessage
+                    var lItem = new TransferComplete
                     {
                         OrderGuid = pOrderGuid,
                         CustomerId = pCustomerId
                     };
-                    message.Topic = "TransferComplete";
+                    var lVisitor = new TransferCompleteToTransferCompleteMessage();
+                    lItem.Accept(lVisitor);
                     PublisherServiceClient lClient = new PublisherServiceClient();
-                    lClient.Publish(message);
-
+                    lClient.Publish(lVisitor.Result);
                     
                 }
                 catch (Exception lException)
                 {
                     Console.WriteLine("Error occured while transferring money:  " + lException.Message);
 
-                    TransferErrorMessage message = new TransferErrorMessage
+                    var lItem = new TransferError
                     {
                         OrderGuid = pOrderGuid
                     };
-                    message.Topic = "TransferError";
-                    message.Error = lException;
+                    var lVisitor = new TransferErrorToTransferErrorMessage();
+                    lItem.Accept(lVisitor);
                     PublisherServiceClient lClient = new PublisherServiceClient();
-                    lClient.Publish(message);
+                    lClient.Publish(lVisitor.Result);
 
-//                    throw; TODO: delete this, stops the message from being published
                 }
 
                 lContainer.SaveChanges();
