@@ -6,6 +6,7 @@ using VideoStore.Business.Components.Interfaces;
 using VideoStore.Business.Entities;
 using Microsoft.Practices.ServiceLocation;
 using System.Transactions;
+using Common.Model;
 
 namespace VideoStore.Business.Components
 {
@@ -61,6 +62,7 @@ namespace VideoStore.Business.Components
                 return lDelivery.Order;
             }
         }
+
     }
 
 

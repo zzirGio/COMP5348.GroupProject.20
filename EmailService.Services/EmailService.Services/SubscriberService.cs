@@ -10,16 +10,14 @@ namespace EmailService.Services
     {
         public void PublishToSubscriber(Common.Model.Message pMessage)
         {
+            EmailService eService = new EmailService();
             if (pMessage is SendEmailMessage)
             {
                 SendEmailMessage lMessage = pMessage as SendEmailMessage;
                 SendEmailMessageToEmailMessage lVisitor = new SendEmailMessageToEmailMessage();
-                pMessage.Accept(lVisitor);
+                lMessage.Accept(lVisitor);
 
-                ServiceFactory.GetService<IEmailProvider>().SendEmail(
-                    MessageTypeConverter.Instance.Convert<
-                        global::EmailService.MessageTypes.EmailMessage,
-                        global::EmailService.Business.Entities.EmailMessage>(lVisitor.Result));
+                eService.SendEmail(lVisitor.Result);
             }
         }
     }

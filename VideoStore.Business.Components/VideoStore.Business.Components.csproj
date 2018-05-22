@@ -56,13 +56,13 @@
     <Compile Include="DeliveryNotificationProvider.cs" />
     <Compile Include="EmailProvider.cs" />
     <Compile Include="ExternalServiceFactory.cs" />
-    <Compile Include="Model\EmailMessageItem.cs" />
     <Compile Include="RoleProvider.cs" />
     <Compile Include="Service References\PublisherService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Transformations\DeliveryInfoItemToDeliveryInfoMessage.cs" />
     <Compile Include="Transformations\EmailMessageItemToSendEmailMessage.cs" />
     <Compile Include="UserProvider.cs" />
     <Compile Include="OrderProvider.cs" />
@@ -116,6 +116,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\PublisherService\service1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\PublisherService\System.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

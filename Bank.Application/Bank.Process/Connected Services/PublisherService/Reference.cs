@@ -16,7 +16,13 @@ namespace Bank.Process.PublisherService {
     public interface IPublisherService {
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IPublisherService/Publish")]
-        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Common.Model.PriceChangeMessage))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Common.Model.SendEmailMessage))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Common.Model.DeliveryInfoMessage))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Common.Model.DeliverySubmittedMessage))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Common.Model.DeliveryCompletedMessage))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Common.Model.TransferCompleteMessage))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Common.Model.TransferErrorMessage))]
+        [System.ServiceModel.ServiceKnownTypeAttribute(typeof(Common.Model.TransferRequestMessage))]
         void Publish(Common.Model.Message pMessage);
         
         [System.ServiceModel.OperationContractAttribute(IsOneWay=true, Action="http://tempuri.org/IPublisherService/Publish")]

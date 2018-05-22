@@ -9,6 +9,7 @@ using VideoStore.Services.MessageTypes;
 
 using System.ServiceModel;
 using Common.Model;
+using VideoStore.Services.MessageTypes.Model;
 
 namespace VideoStore.Services
 {
@@ -31,6 +32,11 @@ namespace VideoStore.Services
         public void FundsTransferFailed(TransferErrorMessage message)
         {
             OrderProvider.FundsTransferFailed(message);
+        }
+
+        public void DeliverySubmitted(DeliverySubmittedItem pItem)
+        {
+            OrderProvider.DeliverySubmitted(pItem.OrderNumber, pItem.DeliveryId);
         }
 
         public void SubmitOrder(Order pOrder)

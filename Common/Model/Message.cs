@@ -8,8 +8,10 @@ using System.Runtime.Serialization;
 namespace Common.Model
 {
     [DataContract]
-    [KnownType(typeof(PriceChangeMessage))]
     [KnownType(typeof(SendEmailMessage))]
+    [KnownType(typeof(DeliveryInfoMessage))]
+    [KnownType(typeof(DeliverySubmittedMessage))]
+    [KnownType(typeof(DeliveryCompletedMessage))]
     [KnownType(typeof(TransferCompleteMessage))]
     [KnownType(typeof(TransferErrorMessage))]
     [KnownType(typeof(TransferRequestMessage))]

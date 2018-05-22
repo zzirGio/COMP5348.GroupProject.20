@@ -71,11 +71,11 @@ namespace Bank.Process
                 if (lContainer.Accounts.Count() == 0)
                 {
                     Customer lVideoStore = new Customer();
-                    Account lVSAccount = new Account() { AccountNumber = 123, Balance = 10000 };
+                    Account lVSAccount = new Account() { AccountNumber = 123, Balance = 0 };
                     lVideoStore.Accounts.Add(lVSAccount);
 
                     Customer lCustomer = new Customer();
-                    Account lCustAccount = new Account() { AccountNumber = 456, Balance = 2000000 };
+                    Account lCustAccount = new Account() { AccountNumber = 456, Balance = 20 };
                     lCustomer.Accounts.Add(lCustAccount);
 
 

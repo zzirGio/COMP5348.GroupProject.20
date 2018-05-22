@@ -47,6 +47,9 @@
     <Compile Include="LoginCredential.cs" />
     <Compile Include="Media.cs" />
     <Compile Include="MessageType.cs" />
+    <Compile Include="Model\DeliveryCompletedItem.cs" />
+    <Compile Include="Model\DeliveryInfoItem.cs" />
+    <Compile Include="Model\DeliverySubmittedItem.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="OrderItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

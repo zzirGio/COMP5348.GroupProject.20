@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Model;
 using VideoStore.Business.Components.Interfaces;
 using VideoStore.Business.Entities;
+using VideoStore.Services.MessageTypes.Model;
 
 namespace VideoStore.Services
 {
@@ -41,6 +43,5 @@ namespace VideoStore.Services
                 throw new Exception("Unexpected delivery status received");
             }
         }
-
     }
 }
