@@ -1,4 +1,5 @@
 ﻿using Bank.Services.Interfaces;
+using Bank.Services.Transformations;
 using Common;
 using Common.Model;
 using Microsoft.Practices.ServiceLocation;
@@ -14,9 +15,14 @@ namespace Bank.Services
     {
         public void PublishToSubscriber(Message pMessage)
         {
-            TransferRequestMessage message = pMessage as TransferRequestMessage;
-            var tService = new TransferService();
-            tService.Transfer(message.Amount, message.FromAccountNumber, message.ToAccountNumber, message.OrderGuid, message.CustomerId);
+            if(pMessage is TransferRequestMessage)
+            {
+                var message = pMessage as TransferRequestMessage;
+                var lVisitor = new TransferRequestMessageToTransferRequest();
+                message.Accept(lVisitor);
+                var tService = new TransferService();
+                tService.Transfer(lVisitor.Result);
+            }
         }
     }
 }

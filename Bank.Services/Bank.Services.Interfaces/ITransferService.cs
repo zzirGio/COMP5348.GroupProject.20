@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.ServiceModel;
+using Bank.MessageTypes;
 
 namespace Bank.Services.Interfaces
 {
@@ -11,6 +12,6 @@ namespace Bank.Services.Interfaces
     {
         [OperationContract(IsOneWay = true)]
         [TransactionFlow(TransactionFlowOption.Allowed)]
-        void Transfer(double pAmount, int pFromAcctNumber, int pToAcctNumber, Guid pOrderGuid, int mCustomerId);
+        void Transfer(TransferRequest pTransferRequest);
     }
 }

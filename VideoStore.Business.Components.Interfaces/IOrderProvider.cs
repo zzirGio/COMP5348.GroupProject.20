@@ -11,8 +11,8 @@ namespace VideoStore.Business.Components.Interfaces
     public interface IOrderProvider
     {
         void SubmitOrder(Order pOrder);
-        void FundsTransferCompleted(TransferCompleteMessage message);
-        void FundsTransferFailed(TransferErrorMessage message);
+        void FundsTransferCompleted(Guid pOrderGuid);
+        void FundsTransferFailed(Guid pOrderGuid);
 
         void DeliverySubmitted(Guid pOrderNumber, Guid pDeliveryIdentifier);
     }

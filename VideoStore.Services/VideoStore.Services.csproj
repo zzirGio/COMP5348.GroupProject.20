@@ -66,6 +66,8 @@
     <Compile Include="SubscriberService.cs" />
     <Compile Include="Transformations\DeliveryCompletedMessageToDeliveryCompletedItem.cs" />
     <Compile Include="Transformations\DeliverySubmittedMessageToDeliverySubmittedItem.cs" />
+    <Compile Include="Transformations\TransferCompleteMessageToTransferCompleteItem.cs" />
+    <Compile Include="Transformations\TransferErrorMessageToTransferErrorItem.cs" />
     <Compile Include="UserService.cs" />
     <Compile Include="OrderService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

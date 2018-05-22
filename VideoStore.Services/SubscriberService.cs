@@ -15,17 +15,23 @@ namespace VideoStore.Services
     {
         public void PublishToSubscriber(Message pMessage)
         {
-            // TODO: apply Transformations from Common::Message models to MessageTypes.Model models
             var oService = new OrderService();
             var dnService = new DeliveryNotificationService();
             if(pMessage.GetType() == typeof(TransferCompleteMessage))
             {
-                oService.FundsTransferCompleted(pMessage as TransferCompleteMessage);
+                var lMessage = pMessage as TransferCompleteMessage;
+                var lVisitor = new TransferCompleteMessageToTransferCompleteItem();
+                lMessage.Accept(lVisitor);
+                oService.FundsTransferCompleted(lVisitor.Result);
             }
             else if(pMessage.GetType() == typeof(TransferErrorMessage))
             {
-                oService.FundsTransferFailed(pMessage as TransferErrorMessage);
-            } else if (pMessage.GetType() == typeof(DeliverySubmittedMessage))
+                var lMessage = pMessage as TransferErrorMessage;
+                var lVisitor = new TransferErrorMessageToTransferErrorItem();
+                lMessage.Accept(lVisitor);
+                oService.FundsTransferFailed(lVisitor.Result);
+            }
+            else if (pMessage.GetType() == typeof(DeliverySubmittedMessage))
             {
                 DeliverySubmittedMessage lMessage = pMessage as DeliverySubmittedMessage;
                 var lVisitor = new DeliverySubmittedMessageToDeliverySubmittedItem();
