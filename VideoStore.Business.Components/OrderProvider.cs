@@ -56,40 +56,6 @@ namespace VideoStore.Business.Components
                     }
                 }
             }
-
-            /*TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
-            Console.WriteLine("Funds Transfer Requested");
-            return;
-
-            using (TransactionScope lScope = new TransactionScope())
-            {
-                LoadMediaStocks(pOrder);
-                MarkAppropriateUnchangedAssociations(pOrder);
-                using (VideoStoreEntityModelContainer lContainer = new VideoStoreEntityModelContainer())
-                {
-                    try
-                    {
-                        pOrder.OrderNumber = Guid.NewGuid();
-                        TransferFundsFromCustomer(UserProvider.ReadUserById(pOrder.Customer.Id).BankAccountNumber, pOrder.Total ?? 0.0);
-                        Console.WriteLine("Funds Transfer Requested");
-
-                        // TODO: Refactor this to execute when Bank sends back Successful Notification
-                        // pOrder.UpdateStockLevels();
-                        // PlaceDeliveryForOrder(pOrder);
-                        lContainer.Orders.ApplyChanges(pOrder);
-         
-                        lContainer.SaveChanges();
-                        lScope.Complete();
-                        
-                    }
-                    catch (Exception lException)
-                    {
-                        SendOrderErrorMessage(pOrder, lException);
-                        throw;
-                    }
-                }
-            }
-            SendOrderPlacedConfirmation(pOrder);*/
         }
 
         public void FundsTransferCompleted(Guid pOrderGuid)
@@ -102,7 +68,6 @@ namespace VideoStore.Business.Components
                     {
                         Console.WriteLine("Funds Transfer Complete");
                         var pOrder = lContainer.Orders.Include("Customer").First(x => x.OrderNumber == pOrderGuid);
-                        //pOrder.Customer = lContainer.Users.First(x => x.Id == message.CustomerId);
 
                         PlaceDeliveryForOrder(pOrder);
 
@@ -130,16 +95,7 @@ namespace VideoStore.Business.Components
                         Console.WriteLine("Funds Transfer Error");
                         var pOrder = lContainer.Orders
                             .Include("Customer").FirstOrDefault(x => x.OrderNumber == pOrderGuid);
-//                            .Include("Customer.LoginCredential")
-//                            .Include("OrderItems")
-//                            .Include("OrderItems.Media")
-                        /*
-                        LoadMediaStocks(pOrder);
-                        MarkAppropriateUnchangedAssociations(pOrder);
-                        pOrder.Customer.Orders.Remove(pOrder);
-                        lContainer.Orders.ApplyChanges(pOrder);
-//                        pOrder.UpdateStockLevels();
-                        pOrder.MarkAsDeleted();*/
+
                         EmailProvider.SendMessage(new EmailMessage()
                         {
                             ToAddress = pOrder.Customer.Email,
@@ -189,9 +145,6 @@ namespace VideoStore.Business.Components
                 ToAddress = pOrder.Customer.Email,
                 Message = "There was an error in processsing your order " + pOrder.OrderNumber + ": "+ pException.Message +". Please contact Video Store"
             });
-//            var toAddress = pOrder.Customer.Email;
-//            var message = "There was an error in processsing your order " + pOrder.OrderNumber + ": " + pException.Message + ". Please contact Video Store";
-//            PublishEmailMessage(toAddress, message);
         }
 
         private void SendOrderPlacedConfirmation(Order pOrder)
@@ -201,9 +154,6 @@ namespace VideoStore.Business.Components
                 ToAddress = pOrder.Customer.Email,
                 Message = "Your order " + pOrder.OrderNumber + " has been placed"
             });
-//            var toAddress = pOrder.Customer.Email;
-//            var message = "Your order " + pOrder.OrderNumber + " has been placed";
-//            PublishEmailMessage(toAddress, message);
         }
 
         private void PlaceDeliveryForOrder(Order pOrder)
